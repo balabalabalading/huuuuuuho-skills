@@ -83,7 +83,7 @@ mp-article-writor/
 
 ## 致谢
 
-- [少数派风格指南](https://manual.sspai.com/rules/style/) — `references/行文风格指南.md` 基于此指南精简，保留了与行文规范直接相关的内容，删除了平台特定和编辑操作相关章节
+- `references/行文风格指南.md` 基于 [少数派风格指南](https://manual.sspai.com/rules/style/) 精简，保留了与行文规范直接相关的内容，删除了平台特定和编辑操作相关章节。原文采用 [知识共享署名 4.0 国际许可协议](https://creativecommons.org/licenses/by/4.0/deed.zh-hans) 进行许可。
 
 ## 许可证
 
