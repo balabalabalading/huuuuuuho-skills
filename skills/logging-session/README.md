@@ -136,7 +136,7 @@ CREATE TABLE dev_logs (
 
 ## Related Article
 
-_Coming soon_
+[写个 Hook 截胡大模型：将零散的 AI 对话重塑为本地知识资产](https://mp.weixin.qq.com/s/jGSc1NjR_DPMWhZEYi8OJQ)
 
 ## License
 
@@ -252,7 +252,7 @@ python3 $SCRIPTS/query_logs.py \
 
 ## 相关文章
 
-_待补充_
+[写个 Hook 截胡大模型：将零散的 AI 对话重塑为本地知识资产](https://mp.weixin.qq.com/s/jGSc1NjR_DPMWhZEYi8OJQ)
 
 ## 许可证
 

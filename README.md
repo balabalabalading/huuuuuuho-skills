@@ -13,7 +13,7 @@ My personal collection of Skills — open-source tools that extend Agent's capab
 | Skill                 | Description                                                                        | README                                       | Article                                                   |
 | --------------------- | ---------------------------------------------------------------------------------- | -------------------------------------------- | --------------------------------------------------------- |
 | **mp-article-writor** | Generate long-form WeChat Official Account articles with a 9-step writing workflow | [README](skills/mp-article-writor/README.md) | [Link](https://mp.weixin.qq.com/s/ayye6aaSlxAwf7gFjPHsRQ) |
-| **logging-session**   | Record and query AI coding session logs to your Obsidian vault                     | [README](skills/logging-session/README.md)   | _Coming soon_                                             |
+| **logging-session**   | Record and query AI coding session logs to your Obsidian vault                     | [README](skills/logging-session/README.md)   | [Link](https://mp.weixin.qq.com/s/jGSc1NjR_DPMWhZEYi8OJQ) |
 | **article2ticktick**  | Convert tech newsletter articles to TickTick todos with auto-categorization        | [README](skills/article2ticktick/README.md)  | [Link](https://mp.weixin.qq.com/s/xbvFmOwk0SwdWMw4BUczSg) |
 
 ## Quick Start
