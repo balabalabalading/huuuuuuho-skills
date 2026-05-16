@@ -1,0 +1,48 @@
+{
+  "skill_name": "session-log",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "我刚刚修复了一个登录页面的bug，用户输入特殊字符时会导致页面崩溃。我排查发现是输入验证的正则表达式写错了，修改了 src/auth/validator.ts 文件。帮我记录一下这次会话。",
+      "expected_output": "应该调用 save_log.py 脚本，正确提取项目名称、分类为 bugfix，记录用户问题、思考过程和最终结果，包含修改的文件路径",
+      "files": [],
+      "assertions": [
+        {"name": "uses_save_script", "description": "调用了 save_log.py 脚本来写入记录，而不是直接用 sqlite3 命令或其他方式"},
+        {"name": "correct_category", "description": "task_category 设置为 bugfix，符合修复 bug 的场景"},
+        {"name": "captures_user_query", "description": "user_query 字段记录了用户的原始问题（关于登录页面特殊字符崩溃）"},
+        {"name": "captures_file_paths", "description": "file_paths 包含了修改的文件 src/auth/validator.ts"},
+        {"name": "captures_thought_process", "description": "thought_process 字段记录了排查思路（正则表达式写错）"},
+        {"name": "generates_session_id", "description": "生成了格式正确的 session_id（YYYYMMDD_xxxx 格式）"},
+        {"name": "confirms_to_user", "description": "向用户确认了记录已保存，包含 log entry ID"}
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "帮我看看这周我都做了什么，我想准备一下周报。项目是 session-log。",
+      "expected_output": "应该调用 query_logs.py 脚本，查询最近7天的记录并按项目筛选，以 markdown 格式输出，给出可读的汇总",
+      "files": [],
+      "assertions": [
+        {"name": "uses_query_script", "description": "调用了 query_logs.py 脚本来查询记录"},
+        {"name": "filters_by_project", "description": "查询时按项目名称 session-log 进行了筛选"},
+        {"name": "correct_time_range", "description": "查询时间范围为最近7天（--days 7）"},
+        {"name": "markdown_format", "description": "使用 markdown 格式输出结果，便于阅读"},
+        {"name": "readable_summary", "description": "结果以可读的方式呈现，包含时间、问题、结果等关键信息"},
+        {"name": "offers_further_help", "description": "提供了进一步的帮助，如导出为 Obsidian 笔记或调整时间范围"}
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "把今天的会话记录导出成 Obsidian 笔记，保存到我的 vault 里。",
+      "expected_output": "应该调用 query_logs.py 脚本，查询最近1天的记录，以 markdown 格式输出到 Obsidian vault 目录，文件名包含日期",
+      "files": [],
+      "assertions": [
+        {"name": "uses_query_script", "description": "调用了 query_logs.py 脚本查询记录"},
+        {"name": "saves_to_vault", "description": "输出文件保存到 Obsidian vault 目录（~/Library/Mobile Documents/iCloud~md~obsidian/Documents/vault4life/）"},
+        {"name": "markdown_format", "description": "使用 markdown 格式输出，与 Obsidian 兼容"},
+        {"name": "filename_with_date", "description": "输出文件名包含日期标识（如 Daily-2026-05-13.md）"},
+        {"name": "correct_time_range", "description": "查询时间范围为今天（--days 1）"},
+        {"name": "confirms_save_path", "description": "向用户确认了文件保存路径"}
+      ]
+    }
+  ]
+}
