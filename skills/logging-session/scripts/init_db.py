@@ -3,6 +3,8 @@ import sqlite3
 import sys
 import os
 
+from config_loader import load_config
+
 
 def init_db(db_path):
     if os.path.exists(db_path):
@@ -46,7 +48,9 @@ def init_db(db_path):
 
 
 if __name__ == "__main__":
-    db_path = sys.argv[1] if len(sys.argv) > 1 else os.path.join(
-        os.environ.get("OBSIDIAN_VAULT", "."), "dev_knowledge.db"
-    )
+    if len(sys.argv) > 1:
+        db_path = sys.argv[1]
+    else:
+        config = load_config()
+        db_path = config["db_path"]
     init_db(db_path)

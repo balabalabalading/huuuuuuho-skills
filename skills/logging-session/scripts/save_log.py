@@ -5,6 +5,8 @@ import sys
 import os
 from datetime import datetime, timezone, timedelta
 
+from config_loader import load_config
+
 CST = timezone(timedelta(hours=8))
 
 
@@ -48,7 +50,7 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(description="Save a session log entry")
-    parser.add_argument("--db", required=True, help="Path to SQLite database")
+    parser.add_argument("--db", default=None, help="Path to SQLite database (defaults to config.json)")
     parser.add_argument("--project", required=True, help="Project name")
     parser.add_argument("--session", required=True, help="Session ID")
     parser.add_argument("--query", required=True, help="User query / task description")
@@ -62,10 +64,19 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    db_path = args.db
+    if not db_path:
+        config = load_config()
+        db_path = config["db_path"]
+
+    if not db_path:
+        print("错误：未指定数据库路径。请通过 --db 指定，或在 config.json 中配置 db_path。", file=sys.stderr)
+        sys.exit(1)
+
     meta = json.loads(args.meta) if args.meta else None
 
     log_id = save_log(
-        args.db, args.project, args.session, args.query,
+        db_path, args.project, args.session, args.query,
         args.thought, args.result, args.parent, args.category,
         args.files, args.git, meta
     )

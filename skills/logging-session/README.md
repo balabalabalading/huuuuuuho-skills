@@ -30,12 +30,26 @@ Then in Claude Code:
 /plugin install huuuuuuho-skills@logging-session
 ```
 
+### Configuration
+
+The database path and Obsidian vault path are defined in `config.json` with these defaults:
+
+```json
+{
+  "db_path": "~/Library/Mobile Documents/iCloud~md~obsidian/Documents/vault4life/dev_knowledge.db",
+  "obsidian_vault_path": "~/Library/Mobile Documents/iCloud~md~obsidian/Documents/vault4life"
+}
+```
+
+To customize, edit `config.json`. Scripts will read from it automatically — no need to pass `--db` manually.
+
 ### Initialize the database
 
 ```bash
-python3 ~/.claude/skills/huuuuuuho-skills/skills/logging-session/scripts/init_db.py \
-  ~/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/vault4life/dev_knowledge.db
+python3 ~/.claude/skills/huuuuuuho-skills/skills/logging-session/scripts/init_db.py
 ```
+
+The script reads the database path from `config.json` automatically.
 
 ### Set up the Stop hook
 
@@ -66,7 +80,7 @@ Just finish your work — the Stop hook captures it automatically. You can also 
 
 - "Record this session"
 - "Log this conversation"
-- "记录本次会话"
+- "/logging-session"
 
 ### Querying sessions
 
@@ -75,17 +89,14 @@ SCRIPTS=~/.claude/skills/huuuuuuho-skills/skills/logging-session/scripts
 
 # Last 7 days for a specific project (markdown)
 python3 $SCRIPTS/query_logs.py \
-  --db ~/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/vault4life/dev_knowledge.db \
   --project "my-app" --days 7 --format markdown
 
 # Today's logs across all projects
 python3 $SCRIPTS/query_logs.py \
-  --db ~/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/vault4life/dev_knowledge.db \
   --days 1 --format markdown
 
 # Export to Obsidian note
 python3 $SCRIPTS/query_logs.py \
-  --db ~/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/vault4life/dev_knowledge.db \
   --days 7 --format markdown \
   --output ~/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/vault4life/Weekly-$(date +%Y-W%V).md
 ```
@@ -159,12 +170,26 @@ git clone https://github.com/balabalabalading/huuuuuuho-skills.git ~/.claude/ski
 /plugin install huuuuuuho-skills@logging-session
 ```
 
+### 自定义配置
+
+数据库路径和 Obsidian vault 路径由 `config.json` 定义。默认值如下：
+
+```json
+{
+  "db_path": "~/Library/Mobile Documents/iCloud~md~obsidian/Documents/vault4life/dev_knowledge.db",
+  "obsidian_vault_path": "~/Library/Mobile Documents/iCloud~md~obsidian/Documents/vault4life"
+}
+```
+
+如需自定义，修改 `config.json` 中的路径即可。后续脚本会自动读取，无需手动传 `--db`。
+
 ### 初始化数据库
 
 ```bash
-python3 ~/.claude/skills/huuuuuuho-skills/skills/logging-session/scripts/init_db.py \
-  ~/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/vault4life/dev_knowledge.db
+python3 ~/.claude/skills/huuuuuuho-skills/skills/logging-session/scripts/init_db.py
 ```
+
+脚本会自动从 `config.json` 读取数据库路径。
 
 ### 配置 Stop hook
 
@@ -204,12 +229,10 @@ SCRIPTS=~/.claude/skills/huuuuuuho-skills/skills/logging-session/scripts
 
 # 最近 7 天指定项目的记录
 python3 $SCRIPTS/query_logs.py \
-  --db ~/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/vault4life/dev_knowledge.db \
   --project "my-app" --days 7 --format markdown
 
 # 导出为 Obsidian 笔记
 python3 $SCRIPTS/query_logs.py \
-  --db ~/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/vault4life/dev_knowledge.db \
   --days 7 --format markdown \
   --output ~/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/vault4life/Weekly-$(date +%Y-W%V).md
 ```

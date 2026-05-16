@@ -19,14 +19,24 @@ Coding sessions produce valuable knowledge — decisions made, problems solved, 
 
 ## Database location
 
-The database lives at:
+The database path is defined by `db_path` in `config.json`, defaulting to:
+
 ```
 ~/Library/Mobile Documents/iCloud~md~obsidian/Documents/vault4life/dev_knowledge.db
 ```
 
-If the database doesn't exist yet, initialize it by running:
+To customize, edit `<skill-path>/config.json`.
+
+If the database doesn't exist yet, initialize it:
+
 ```bash
-python3 <skill-path>/scripts/init_db.py ~/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/vault4life/dev_knowledge.db
+python3 <skill-path>/scripts/init_db.py
+```
+
+The script reads the path from `config.json` automatically. You can also specify a path manually:
+
+```bash
+python3 <skill-path>/scripts/init_db.py /path/to/your/dev_knowledge.db
 ```
 
 ## Schema
@@ -52,7 +62,7 @@ CREATE TABLE dev_logs (
 ## When to record
 
 Record a session log entry when:
-1. **User explicitly asks** — they say "record this session", "log this conversation", "logging-session", "记录本次会话", etc.
+1. **User explicitly asks** — they say "record this session", "log this conversation", "logging-session", etc.
 2. **A meaningful task completes** — when a significant coding task is done (bug fixed, feature added, refactoring completed), and the user wants it captured.
 3. **Via Stop hook** — when the hook fires automatically at session end, synthesize the entire conversation into a log entry.
 
@@ -84,7 +94,6 @@ Collect these fields from the conversation and environment:
 Run the save script:
 ```bash
 python3 <skill-path>/scripts/save_log.py \
-  --db ~/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/vault4life/dev_knowledge.db \
   --project "<project_name>" \
   --session "<session_id>" \
   --query "<user_query>" \
@@ -114,20 +123,17 @@ When the user asks for a summary (daily, weekly, or custom range):
 ```bash
 # Last 7 days for current project
 python3 <skill-path>/scripts/query_logs.py \
-  --db ~/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/vault4life/dev_knowledge.db \
   --project "<project_name>" \
   --days 7 \
   --format markdown
 
 # Today's logs across all projects
 python3 <skill-path>/scripts/query_logs.py \
-  --db ~/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/vault4life/dev_knowledge.db \
   --days 1 \
   --format markdown
 
 # Specific session's full thread
 python3 <skill-path>/scripts/query_logs.py \
-  --db ~/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/vault4life/dev_knowledge.db \
   --session "<session_id>" \
   --format ai
 ```
@@ -143,7 +149,6 @@ python3 <skill-path>/scripts/query_logs.py \
 When the user wants to save the summary as an Obsidian note:
 ```bash
 python3 <skill-path>/scripts/query_logs.py \
-  --db ~/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/vault4life/dev_knowledge.db \
   --days 7 \
   --format markdown \
   --output ~/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/vault4life/Weekly-$(date +%Y-W%V).md

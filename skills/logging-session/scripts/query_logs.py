@@ -5,6 +5,8 @@ import sys
 import os
 from datetime import datetime, timedelta
 
+from config_loader import load_config
+
 
 def query_logs(db_path, project=None, days=7, session_id=None, limit=100):
     conn = sqlite3.connect(db_path)
@@ -85,7 +87,7 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(description="Query session logs")
-    parser.add_argument("--db", required=True, help="Path to SQLite database")
+    parser.add_argument("--db", default=None, help="Path to SQLite database (defaults to config.json)")
     parser.add_argument("--project", default=None, help="Filter by project name")
     parser.add_argument("--days", type=int, default=7, help="Look back N days")
     parser.add_argument("--session", default=None, help="Filter by session ID")
@@ -96,7 +98,16 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    logs = query_logs(args.db, args.project, args.days, args.session, args.limit)
+    db_path = args.db
+    if not db_path:
+        config = load_config()
+        db_path = config["db_path"]
+
+    if not db_path:
+        print("错误：未指定数据库路径。请通过 --db 指定，或在 config.json 中配置 db_path。", file=sys.stderr)
+        sys.exit(1)
+
+    logs = query_logs(db_path, args.project, args.days, args.session, args.limit)
 
     if args.format == "markdown":
         content = format_markdown(logs)
