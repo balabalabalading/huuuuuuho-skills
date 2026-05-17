@@ -23,21 +23,17 @@ A Skill that converts technical newsletter articles (batch or single) into [Tick
 
 ### Via Claude Code Marketplace
 
-```bash
-git clone https://github.com/balabalabalading/huuuuuuho-skills.git ~/.claude/skills/huuuuuuho-skills
+In Claude Code:
 ```
-
-Then in Claude Code:
-```
-/plugin marketplace add ~/.claude/skills/huuuuuuho-skills
-/plugin install huuuuuuho-skills@article2ticktick
+/plugin marketplace add balabalabalading/huuuuuuho-skills
+/plugin install article2ticktick@huuuuuuho
 ```
 
 ### Local testing
 
 ```bash
 /plugin marketplace add ./path/to/huuuuuuho-skills
-/plugin install huuuuuuho-skills@article2ticktick
+/plugin install article2ticktick@huuuuuuho
 ```
 
 ## Usage
@@ -68,7 +64,7 @@ Level-2 categories map to TickTick list names; Level-3 categories map to tags.
 ## Standalone Script Usage
 
 ```bash
-SCRIPTS=~/.claude/skills/huuuuuuho-skills/skills/article2ticktick/scripts
+SCRIPTS=${CLAUDE_PLUGIN_ROOT}/scripts
 
 # Batch mode (dry-run preview)
 echo "[markdown content]" | python3 $SCRIPTS/add_articles.py --dry-run
@@ -111,21 +107,17 @@ python3 $SCRIPTS/add_articles.py \
 
 ### 通过 Claude Code Marketplace
 
-```bash
-git clone https://github.com/balabalabalading/huuuuuuho-skills.git ~/.claude/skills/huuuuuuho-skills
-```
-
 在 Claude Code 中运行：
 ```
-/plugin marketplace add ~/.claude/skills/huuuuuuho-skills
-/plugin install huuuuuuho-skills@article2ticktick
+/plugin marketplace add balabalabalading/huuuuuuho-skills
+/plugin install article2ticktick@huuuuuuho
 ```
 
 ### 本地测试
 
 ```bash
 /plugin marketplace add ./path/to/huuuuuuho-skills
-/plugin install huuuuuuho-skills@article2ticktick
+/plugin install article2ticktick@huuuuuuho
 ```
 
 ## 使用
@@ -154,7 +146,7 @@ git clone https://github.com/balabalabalading/huuuuuuho-skills.git ~/.claude/ski
 ## 脚本直接使用
 
 ```bash
-SCRIPTS=~/.claude/skills/huuuuuuho-skills/skills/article2ticktick/scripts
+SCRIPTS=${CLAUDE_PLUGIN_ROOT}/scripts
 
 # 批量模式（预览）
 echo "[markdown 内容]" | python3 $SCRIPTS/add_articles.py --dry-run

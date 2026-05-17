@@ -20,14 +20,10 @@ Record and query AI coding session logs — what you asked, how it was solved, a
 
 ### Via Claude Code Marketplace
 
-```bash
-git clone https://github.com/balabalabalading/huuuuuuho-skills.git ~/.claude/skills/huuuuuuho-skills
+In Claude Code:
 ```
-
-Then in Claude Code:
-```
-/plugin marketplace add ~/.claude/skills/huuuuuuho-skills
-/plugin install huuuuuuho-skills@logging-session
+/plugin marketplace add balabalabalading/huuuuuuho-skills
+/plugin install logging-session@huuuuuuho
 ```
 
 ### Configuration
@@ -46,7 +42,7 @@ To customize, edit `config.json`. Scripts will read from it automatically — no
 ### Initialize the database
 
 ```bash
-python3 ~/.claude/skills/huuuuuuho-skills/skills/logging-session/scripts/init_db.py
+python3 ${CLAUDE_PLUGIN_ROOT}/scripts/init_db.py
 ```
 
 The script reads the database path from `config.json` automatically.
@@ -85,7 +81,7 @@ Just finish your work — the Stop hook captures it automatically. You can also 
 ### Querying sessions
 
 ```bash
-SCRIPTS=~/.claude/skills/huuuuuuho-skills/skills/logging-session/scripts
+SCRIPTS=${CLAUDE_PLUGIN_ROOT}/scripts
 
 # Last 7 days for a specific project (markdown)
 python3 $SCRIPTS/query_logs.py \
@@ -160,14 +156,10 @@ CREATE TABLE dev_logs (
 
 ### 通过 Claude Code Marketplace
 
-```bash
-git clone https://github.com/balabalabalading/huuuuuuho-skills.git ~/.claude/skills/huuuuuuho-skills
-```
-
 在 Claude Code 中运行：
 ```
-/plugin marketplace add ~/.claude/skills/huuuuuuho-skills
-/plugin install huuuuuuho-skills@logging-session
+/plugin marketplace add balabalabalading/huuuuuuho-skills
+/plugin install logging-session@huuuuuuho
 ```
 
 ### 自定义配置
@@ -186,7 +178,7 @@ git clone https://github.com/balabalabalading/huuuuuuho-skills.git ~/.claude/ski
 ### 初始化数据库
 
 ```bash
-python3 ~/.claude/skills/huuuuuuho-skills/skills/logging-session/scripts/init_db.py
+python3 ${CLAUDE_PLUGIN_ROOT}/scripts/init_db.py
 ```
 
 脚本会自动从 `config.json` 读取数据库路径。
@@ -225,7 +217,7 @@ python3 ~/.claude/skills/huuuuuuho-skills/skills/logging-session/scripts/init_db
 ### 查询会话
 
 ```bash
-SCRIPTS=~/.claude/skills/huuuuuuho-skills/skills/logging-session/scripts
+SCRIPTS=${CLAUDE_PLUGIN_ROOT}/scripts
 
 # 最近 7 天指定项目的记录
 python3 $SCRIPTS/query_logs.py \

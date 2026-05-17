@@ -20,21 +20,17 @@ A Claude Code Skill that helps content creators craft long-form articles for WeC
 
 ### Via Claude Code Marketplace
 
-```bash
-git clone https://github.com/balabalabalading/huuuuuuho-skills.git ~/.claude/skills/huuuuuuho-skills
+In Claude Code:
 ```
-
-Then in Claude Code:
-```
-/plugin marketplace add ~/.claude/skills/huuuuuuho-skills
-/plugin install huuuuuuho-skills@mp-article-writor
+/plugin marketplace add balabalabalading/huuuuuuho-skills
+/plugin install mp-article-writor@huuuuuuho
 ```
 
 ### Local testing
 
 ```bash
 /plugin marketplace add ./path/to/huuuuuuho-skills
-/plugin install huuuuuuho-skills@mp-article-writor
+/plugin install mp-article-writor@huuuuuuho
 ```
 
 ## Usage
@@ -97,21 +93,17 @@ After installation, customize `SKILL.md` for your own writing:
 
 ### 通过 Claude Code Marketplace
 
-```bash
-git clone https://github.com/balabalabalading/huuuuuuho-skills.git ~/.claude/skills/huuuuuuho-skills
-```
-
 在 Claude Code 中运行：
 ```
-/plugin marketplace add ~/.claude/skills/huuuuuuho-skills
-/plugin install huuuuuuho-skills@mp-article-writor
+/plugin marketplace add balabalabalading/huuuuuuho-skills
+/plugin install mp-article-writor@huuuuuuho
 ```
 
 ### 本地测试
 
 ```bash
 /plugin marketplace add ./path/to/huuuuuuho-skills
-/plugin install huuuuuuho-skills@mp-article-writor
+/plugin install mp-article-writor@huuuuuuho
 ```
 
 ## 使用

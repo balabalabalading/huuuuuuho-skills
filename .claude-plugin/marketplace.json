@@ -1,8 +1,7 @@
 {
   "name": "huuuuuuho",
   "owner": {
-    "name": "Mr.H",
-    "email": ""
+    "name": "Mr.H"
   },
   "metadata": {
     "description": "个人 Skills 合集：公众号写作、会话记录、滴答清单待办添加",
@@ -12,29 +11,23 @@
     {
       "name": "mp-article-writor",
       "description": "公众号长文生成：9步工作流，从素材到终稿",
-      "source": "./",
+      "source": "./skills/mp-article-writor",
       "strict": false,
-      "skills": [
-        "./skills/mp-article-writor"
-      ]
+      "skills": ["."]
     },
     {
       "name": "logging-session",
       "description": "AI 编码会话记录与查询，支持 Obsidian 集成",
-      "source": "./",
+      "source": "./skills/logging-session",
       "strict": false,
-      "skills": [
-        "./skills/logging-session"
-      ]
+      "skills": ["."]
     },
     {
       "name": "article2ticktick",
       "description": "技术周报文章批量/单篇添加到滴答清单",
-      "source": "./",
+      "source": "./skills/article2ticktick",
       "strict": false,
-      "skills": [
-        "./skills/article2ticktick"
-      ]
+      "skills": ["."]
     }
   ]
 }

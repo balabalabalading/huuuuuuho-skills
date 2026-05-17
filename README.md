@@ -20,23 +20,18 @@ My personal collection of Skills — open-source tools that extend Agent's capab
 
 ### Install all skills at once
 
-```bash
-# Clone the repo
-git clone https://github.com/balabalabalading/huuuuuuho-skills.git ~/.claude/skills/huuuuuuho-skills
+In Claude Code:
 ```
-
-Then in Claude Code:
-```
-/plugin marketplace add ~/.claude/skills/huuuuuuho-skills
-/plugin install huuuuuuho-skills@mp-article-writor
-/plugin install huuuuuuho-skills@logging-session
-/plugin install huuuuuuho-skills@article2ticktick
+/plugin marketplace add balabalabalading/huuuuuuho-skills
+/plugin install mp-article-writor@huuuuuuho
+/plugin install logging-session@huuuuuuho
+/plugin install article2ticktick@huuuuuuho
 ```
 
 ### Install a single skill
 
 ```
-/plugin install huuuuuuho-skills@<skill-name>
+/plugin install <skill-name>@huuuuuuho
 ```
 
 Replace `<skill-name>` with `mp-article-writor`, `logging-session`, or `article2ticktick`.
@@ -88,23 +83,18 @@ huuuuuuho-skills/
 
 ### 一次性安装所有 Skills
 
-```bash
-# 克隆仓库
-git clone https://github.com/balabalabalading/huuuuuuho-skills.git ~/.claude/skills/huuuuuuho-skills
-```
-
 在 Claude Code 中运行：
 ```
-/plugin marketplace add ~/.claude/skills/huuuuuuho-skills
-/plugin install huuuuuuho-skills@mp-article-writor
-/plugin install huuuuuuho-skills@logging-session
-/plugin install huuuuuuho-skills@article2ticktick
+/plugin marketplace add balabalabalading/huuuuuuho-skills
+/plugin install mp-article-writor@huuuuuuho
+/plugin install logging-session@huuuuuuho
+/plugin install article2ticktick@huuuuuuho
 ```
 
 ### 单独安装某个 Skill
 
 ```
-/plugin install huuuuuuho-skills@<skill-name>
+/plugin install <skill-name>@huuuuuuho
 ```
 
 将 `<skill-name>` 替换为 `mp-article-writor`、`logging-session` 或 `article2ticktick`。
