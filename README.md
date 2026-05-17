@@ -76,7 +76,7 @@ huuuuuuho-skills/
 | Skill | 简介 | README | 公众号文章 |
 |---|---|---|---|
 | **mp-article-writor** | 公众号长文生成：9 步写作工作流，从素材到终稿 | [README](skills/mp-article-writor/README.md) | [链接](https://mp.weixin.qq.com/s/ayye6aaSlxAwf7gFjPHsRQ) |
-| **logging-session** | AI 编码会话记录与查询，支持 Obsidian 集成 | [README](skills/logging-session/README.md) | _待补充_ |
+| **logging-session** | AI 编码会话记录与查询，支持 Obsidian 集成 | [README](skills/logging-session/README.md) | [链接](https://mp.weixin.qq.com/s/jGSc1NjR_DPMWhZEYi8OJQ) |
 | **article2ticktick** | 技术周报文章批量/单篇转滴答清单待办 | [README](skills/article2ticktick/README.md) | [链接](https://mp.weixin.qq.com/s/xbvFmOwk0SwdWMw4BUczSg) |
 
 ## 快速开始
