@@ -4,7 +4,7 @@
     "name": "Mr.H"
   },
   "metadata": {
-    "description": "个人 Skills 合集：公众号写作、会话记录、滴答清单待办添加",
+    "description": "个人 Skills 合集：公众号写作、会话记录、滴答清单待办、Ardot 设计工具",
     "version": "1.0.0"
   },
   "plugins": [
@@ -26,6 +26,41 @@
       "name": "article2ticktick",
       "description": "技术周报文章批量/单篇添加到滴答清单",
       "source": "./skills/article2ticktick",
+      "strict": false,
+      "skills": ["."]
+    },
+    {
+      "name": "ardot-use",
+      "description": "Ardot batch_edit DSL 核心技能 — 所有写操作的强制前提，包含操作符参考、变量绑定模式、已知坑点和错误恢复",
+      "source": "./skills/Ardot-skills-nonofficial/ardot-use",
+      "strict": false,
+      "skills": ["."]
+    },
+    {
+      "name": "ardot-create-new-file",
+      "description": "创建新 Ardot 页面的强制前提技能",
+      "source": "./skills/Ardot-skills-nonofficial/ardot-create-new-file",
+      "strict": false,
+      "skills": ["."]
+    },
+    {
+      "name": "ardot-style-guide",
+      "description": "Ardot 样式指南搜索和构建技能，包含三轮回退协议和权威性约束",
+      "source": "./skills/Ardot-skills-nonofficial/ardot-style-guide",
+      "strict": false,
+      "skills": ["."]
+    },
+    {
+      "name": "ardot-generate-design",
+      "description": "从零构建完整页面/视图的高级工作流，编排多工具协作",
+      "source": "./skills/Ardot-skills-nonofficial/ardot-generate-design",
+      "strict": false,
+      "skills": ["."]
+    },
+    {
+      "name": "ardot-generate-library",
+      "description": "构建可复用组件库和设计系统的工作流",
+      "source": "./skills/Ardot-skills-nonofficial/ardot-generate-library",
       "strict": false,
       "skills": ["."]
     }
