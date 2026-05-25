@@ -4,8 +4,14 @@ import os
 
 SKILL_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEFAULT_CONFIG = {
-    "db_path": os.path.join(os.path.expanduser("~"), "dev_knowledge.db"),
-    "obsidian_vault_path": os.path.expanduser("~"),
+    "db_path": os.path.join(
+        os.path.expanduser("~"),
+        "Library/Mobile Documents/iCloud~md~obsidian/Documents/vault4life/dev_knowledge.db"
+    ),
+    "obsidian_vault_path": os.path.join(
+        os.path.expanduser("~"),
+        "Library/Mobile Documents/iCloud~md~obsidian/Documents/vault4life"
+    ),
 }
 
 

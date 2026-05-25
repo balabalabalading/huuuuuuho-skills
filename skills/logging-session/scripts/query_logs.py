@@ -44,6 +44,9 @@ def query_logs(db_path, project=None, days=7, session_id=None, limit=100):
 
 def format_markdown(logs, title="Session Log"):
     output = f"# {title}\n\n"
+    if not logs:
+        output += "*No records found for the specified period.*\n"
+        return output
     current_date = None
 
     for log in logs:
@@ -89,7 +92,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Query session logs")
     parser.add_argument("--db", default=None, help="Path to SQLite database (defaults to config.json)")
     parser.add_argument("--project", default=None, help="Filter by project name")
-    parser.add_argument("--days", type=int, default=7, help="Look back N days")
+    parser.add_argument("--days", type=int, default=7, help="Look back N days (0 = all records)")
     parser.add_argument("--session", default=None, help="Filter by session ID")
     parser.add_argument("--limit", type=int, default=100, help="Max results")
     parser.add_argument("--format", choices=["markdown", "ai", "json"], default="markdown",

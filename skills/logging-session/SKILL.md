@@ -1,17 +1,14 @@
 ---
 name: logging-session
 description: |
-  Record and query AI coding session logs — what you asked, how it was solved, and the result.
-  Use this skill whenever: a session ends and you want to log it, you want to summarize recent work,
-  you mention "session log", "logging session", "dev log", "session record", "会话记录", "开发日志",
-  or want daily/weekly project summaries from past conversations. Also use when the user asks to
-  review what they've done recently, prepare a standup report, or compile a weekly summary.
-  Also triggers automatically via Stop hook when a session ends.
+  Record and query AI conversation logs — what users asked, how it was solved, and the result.
+  Use when users want to logging conversation, summarize recent work from sessions,
+  or want daily/weekly project summaries from past conversations. 
 ---
 
 # Logging Session
 
-This skill records coding session summaries to a local SQLite database stored in your Obsidian vault, so you can later query and summarize your work across projects and time periods.
+This skill records coding session summaries to a local SQLite database stored in your local path, so you can later query and summarize your work across projects and time periods.
 
 ## Why this matters
 
@@ -143,6 +140,30 @@ python3 <skill-path>/scripts/query_logs.py \
 - `markdown` — structured Markdown with headers by date (good for reports and Obsidian)
 - `ai` — plain text blocks, compact (good for feeding back to AI)
 - `json` — raw JSON array (good for programmatic processing)
+
+### Weekly Project Summary (项目周报)
+
+When the user asks to summarize work by project for the past week or generate a weekly report, use `weekly_summary.py`. This script groups entries by project, shows task category breakdowns, and lists individual session details — all in a clean markdown table format.
+
+**Trigger phrases**: "总结过去一周的工作", "本周工作总结", "生成周报", "项目周报", "weekly summary", "summarize past week's work"
+
+```bash
+# All projects, past 7 days
+python3 <skill-path>/scripts/weekly_summary.py --days 7 --format markdown
+
+# Single project, past 14 days
+python3 <skill-path>/scripts/weekly_summary.py --project "my-app" --days 14
+
+# Export to Obsidian
+python3 <skill-path>/scripts/weekly_summary.py \
+  --format markdown \
+  --output ~/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/vault4life/周报-$(date +%Y-W%V).md
+
+# JSON for programmatic use
+python3 <skill-path>/scripts/weekly_summary.py --format json
+```
+
+The markdown output includes an overview section (total entries, projects involved, time period) and per-project sections with task category distribution tables and session detail tables.
 
 ### Saving to Obsidian
 

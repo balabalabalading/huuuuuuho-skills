@@ -14,10 +14,12 @@ def init_db(db_path):
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
+    cursor.execute("PRAGMA journal_mode=WAL")
+
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS dev_logs (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        created_at DATETIME DEFAULT (datetime('now')),
         project_name TEXT NOT NULL,
         session_id TEXT NOT NULL,
         parent_id INTEGER DEFAULT NULL,

@@ -3,16 +3,14 @@ import sqlite3
 import json
 import sys
 import os
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone
 
 from config_loader import load_config
-
-CST = timezone(timedelta(hours=8))
 
 
 def save_log(db_path, project, session, query, thought, result,
              parent=None, category=None, files=None, git=None, meta=None):
-    now_cst = datetime.now(CST).strftime("%Y-%m-%d %H:%M:%S")
+    now_utc = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
 
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
@@ -26,7 +24,7 @@ def save_log(db_path, project, session, query, thought, result,
     """
 
     data = (
-        now_cst,
+        now_utc,
         project,
         session,
         parent,
@@ -73,7 +71,12 @@ if __name__ == "__main__":
         print("错误：未指定数据库路径。请通过 --db 指定，或在 config.json 中配置 db_path。", file=sys.stderr)
         sys.exit(1)
 
-    meta = json.loads(args.meta) if args.meta else None
+    meta = None
+    if args.meta:
+        try:
+            meta = json.loads(args.meta)
+        except json.JSONDecodeError as e:
+            print(f"警告：--meta 参数不是有效的 JSON，已忽略: {e}", file=sys.stderr)
 
     log_id = save_log(
         db_path, args.project, args.session, args.query,

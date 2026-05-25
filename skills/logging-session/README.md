@@ -6,13 +6,14 @@
 
 <a id="english"></a>
 
-Record and query AI coding session logs — what you asked, how it was solved, and the result. Stores entries to a local SQLite database in your Obsidian vault for later summarization and review.
+Record and query AI conversation logs — what users asked, how it was solved, and the result. Use when users want to log conversations, summarize recent work from sessions, or want daily/weekly project summaries from past conversations.
 
 ## Features
 
 - **Automatic logging via Stop hook**: When a Claude Code session ends, the Stop hook triggers automatic session summarization — no manual action needed
 - **Structured records**: Captures project name, user query, thought process, final result, file paths, git hash, and more
 - **Flexible querying**: Query by project, date range, or session ID; output as markdown, AI-readable text, or JSON
+- **Weekly project summary**: Generate weekly reports grouped by project with task category breakdowns and session detail tables
 - **Obsidian integration**: Export summaries as Obsidian notes directly into your vault
 - **Thread support**: Link related sessions via `parent_id` to build conversation threads
 
@@ -42,7 +43,7 @@ To customize, edit `config.json`. Scripts will read from it automatically — no
 ### Initialize the database
 
 ```bash
-python3 ${CLAUDE_PLUGIN_ROOT}/scripts/init_db.py
+python3 <skill-path>/scripts/init_db.py
 ```
 
 The script reads the database path from `config.json` automatically.
@@ -81,7 +82,7 @@ Just finish your work — the Stop hook captures it automatically. You can also 
 ### Querying sessions
 
 ```bash
-SCRIPTS=${CLAUDE_PLUGIN_ROOT}/scripts
+SCRIPTS=<skill-path>/scripts
 
 # Last 7 days for a specific project (markdown)
 python3 $SCRIPTS/query_logs.py \
@@ -95,6 +96,26 @@ python3 $SCRIPTS/query_logs.py \
 python3 $SCRIPTS/query_logs.py \
   --days 7 --format markdown \
   --output ~/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/vault4life/Weekly-$(date +%Y-W%V).md
+```
+
+### Weekly Project Summary
+
+Generate a weekly report grouped by project with task category breakdowns:
+
+```bash
+# All projects, past 7 days (excludes today)
+python3 $SCRIPTS/weekly_summary.py --days 7 --format markdown
+
+# Single project, past 14 days
+python3 $SCRIPTS/weekly_summary.py --project "my-app" --days 14
+
+# Compact AI-readable text format
+python3 $SCRIPTS/weekly_summary.py --format ai
+
+# Export to Obsidian
+python3 $SCRIPTS/weekly_summary.py \
+  --format markdown \
+  --output ~/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/vault4life/周报-$(date +%Y-W%V).md
 ```
 
 ## Database Schema
@@ -142,13 +163,14 @@ CREATE TABLE dev_logs (
 
 <a id="chinese"></a>
 
-记录和查询 AI 编码会话日志 — 你问了什么、怎么解决的、结果如何。将会话摘要存储到本地 SQLite 数据库，方便后续查询和回顾。
+记录和查询 AI 会话日志 — 用户问了什么、怎么解决的、结果如何。当你需要记录会话、回顾近期工作，或生成日/周项目摘要时使用。
 
 ## 功能特性
 
 - **Stop hook 自动记录**：Claude Code 会话结束时自动触发总结，无需手动操作
 - **结构化记录**：记录项目名称、用户问题、思考过程、最终结果、文件路径、git hash 等
 - **灵活查询**：按项目、日期范围、会话 ID 查询；支持 markdown、AI 可读文本、JSON 三种输出格式
+- **项目周报**：按项目分组生成周报，包含任务分类统计和会话详情表格
 - **Obsidian 集成**：直接导出为 Obsidian 笔记到 vault 中
 - **会话线程**：通过 `parent_id` 关联相关会话
 
@@ -178,7 +200,7 @@ CREATE TABLE dev_logs (
 ### 初始化数据库
 
 ```bash
-python3 ${CLAUDE_PLUGIN_ROOT}/scripts/init_db.py
+python3 <skill-path>/scripts/init_db.py
 ```
 
 脚本会自动从 `config.json` 读取数据库路径。
@@ -212,12 +234,12 @@ python3 ${CLAUDE_PLUGIN_ROOT}/scripts/init_db.py
 正常完成工作即可 — Stop hook 会自动捕获。也可以手动触发：
 - "记录本次会话"
 - "Log this conversation"
-- /logging session
+- /logging-session
 
 ### 查询会话
 
 ```bash
-SCRIPTS=${CLAUDE_PLUGIN_ROOT}/scripts
+SCRIPTS=<skill-path>/scripts
 
 # 最近 7 天指定项目的记录
 python3 $SCRIPTS/query_logs.py \
@@ -227,6 +249,26 @@ python3 $SCRIPTS/query_logs.py \
 python3 $SCRIPTS/query_logs.py \
   --days 7 --format markdown \
   --output ~/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/vault4life/Weekly-$(date +%Y-W%V).md
+```
+
+### 项目周报
+
+按项目分组生成周报，包含分类统计和会话详情表格：
+
+```bash
+# 全部项目，过去 7 天（不含当天）
+python3 $SCRIPTS/weekly_summary.py --days 7 --format markdown
+
+# 单项目，过去 14 天
+python3 $SCRIPTS/weekly_summary.py --project "my-app" --days 14
+
+# 紧凑的 AI 可读文本格式
+python3 $SCRIPTS/weekly_summary.py --format ai
+
+# 导出到 Obsidian
+python3 $SCRIPTS/weekly_summary.py \
+  --format markdown \
+  --output ~/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/vault4life/周报-$(date +%Y-W%V).md
 ```
 
 ## 任务分类

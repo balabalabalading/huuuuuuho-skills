@@ -1,5 +1,5 @@
 {
-  "skill_name": "session-log",
+  "skill_name": "logging-session",
   "evals": [
     {
       "id": 1,
@@ -42,6 +42,22 @@
         {"name": "filename_with_date", "description": "输出文件名包含日期标识（如 Daily-2026-05-13.md）"},
         {"name": "correct_time_range", "description": "查询时间范围为今天（--days 1）"},
         {"name": "confirms_save_path", "description": "向用户确认了文件保存路径"}
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "总结过去一周的工作，我要准备团队周报。",
+      "expected_output": "应该调用 weekly_summary.py 脚本，查询最近7天所有项目的记录，按项目分组输出汇总，包含分类统计和详细会话列表，以 markdown 格式呈现",
+      "files": [],
+      "assertions": [
+        {"name": "uses_weekly_summary_script", "description": "调用了 weekly_summary.py 脚本来生成项目周报，而非 query_logs.py"},
+        {"name": "default_7_days", "description": "使用默认的7天时间范围"},
+        {"name": "all_projects", "description": "未限定单个项目，汇总所有项目的记录"},
+        {"name": "markdown_format", "description": "使用 markdown 格式输出，便于阅读和分享"},
+        {"name": "project_grouping", "description": "输出按项目分组，每个项目显示记录数和任务分类统计"},
+        {"name": "category_breakdown", "description": "每个项目包含任务分类分布表格"},
+        {"name": "session_details", "description": "每个项目包含详细会话列表表格，显示日期、分类、内容和结果"},
+        {"name": "overview_section", "description": "输出包含概览信息：总记录数、涉及项目数、统计周期"}
       ]
     }
   ]
