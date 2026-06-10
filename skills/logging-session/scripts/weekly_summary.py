@@ -3,12 +3,20 @@ import sqlite3
 import json
 import sys
 from collections import Counter
-from datetime import datetime, timedelta
 
 from config_loader import load_config
+from time_utils import local_day_start_str, local_date_str
 
 
-def query_logs(db_path, project=None, days=7, limit=200):
+def _normalize_date(d):
+    """Convert YYYYMMDD to YYYY-MM-DD. Pass through if already formatted."""
+    if d and len(d) == 8 and d.isdigit():
+        return f"{d[:4]}-{d[4:6]}-{d[6:8]}"
+    return d
+
+
+def query_logs(db_path, project=None, days=7, limit=200,
+              start_date=None, end_date=None):
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
@@ -16,10 +24,24 @@ def query_logs(db_path, project=None, days=7, limit=200):
     query = "SELECT * FROM dev_logs WHERE 1=1"
     params = []
 
-    if days:
-        query += " AND created_at >= datetime('now', ?, 'start of day')"
-        query += " AND created_at < datetime('now', 'start of day')"
-        params.append(f"-{days} days")
+    if start_date and end_date:
+        start_date = _normalize_date(start_date)
+        end_date = _normalize_date(end_date)
+        query += " AND created_at >= ? AND created_at < datetime(?, '+1 day')"
+        params.append(start_date)
+        params.append(end_date)
+    elif start_date:
+        start_date = _normalize_date(start_date)
+        query += " AND created_at >= ?"
+        params.append(start_date)
+    elif end_date:
+        end_date = _normalize_date(end_date)
+        query += " AND created_at < datetime(?, '+1 day')"
+        params.append(end_date)
+    elif days:
+        query += " AND created_at >= ? AND created_at < ?"
+        params.append(local_day_start_str(days))
+        params.append(local_day_start_str(0))
 
     if project:
         query += " AND project_name = ?"
@@ -38,13 +60,17 @@ def query_logs(db_path, project=None, days=7, limit=200):
     return results
 
 
-def build_summary(logs, days=7):
-    end_date = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
-    start_date = (datetime.now() - timedelta(days=days)).strftime("%Y-%m-%d")
+def build_summary(logs, days=7, start_date=None, end_date=None):
+    if start_date and end_date:
+        end_str = _normalize_date(end_date)
+        start_str = _normalize_date(start_date)
+    else:
+        end_str = local_date_str(1)
+        start_str = local_date_str(days)
 
     if not logs:
         return {
-            "period": {"start_date": start_date, "end_date": end_date, "days": days},
+            "period": {"start_date": start_str, "end_date": end_str, "days": days},
             "total_entries": 0,
             "total_projects": 0,
             "projects": [],
@@ -81,7 +107,7 @@ def build_summary(logs, days=7):
     project_list.sort(key=lambda p: p["total_entries"], reverse=True)
 
     return {
-        "period": {"start_date": start_date, "end_date": end_date, "days": days},
+        "period": {"start_date": start_str, "end_date": end_str, "days": days},
         "total_entries": len(logs),
         "total_projects": len(project_list),
         "projects": project_list,
@@ -174,6 +200,8 @@ if __name__ == "__main__":
     parser.add_argument("--db", default=None, help="Path to SQLite database (defaults to config.json)")
     parser.add_argument("--project", default=None, help="Filter by project name")
     parser.add_argument("--days", type=int, default=7, help="Look back N days (0 = all records, default: 7)")
+    parser.add_argument("--start-date", default=None, help="Start date YYYYMMDD (inclusive)")
+    parser.add_argument("--end-date", default=None, help="End date YYYYMMDD (inclusive)")
     parser.add_argument("--limit", type=int, default=200, help="Max rows to fetch (default: 200)")
     parser.add_argument("--format", choices=["markdown", "ai", "json"], default="markdown",
                         help="Output format (default: markdown)")
@@ -190,8 +218,9 @@ if __name__ == "__main__":
         print("错误：未指定数据库路径。请通过 --db 指定，或在 config.json 中配置 db_path。", file=sys.stderr)
         sys.exit(1)
 
-    logs = query_logs(db_path, args.project, args.days, args.limit)
-    summary = build_summary(logs, args.days)
+    logs = query_logs(db_path, args.project, args.days, args.limit,
+                      args.start_date, args.end_date)
+    summary = build_summary(logs, args.days, args.start_date, args.end_date)
 
     if args.format == "json":
         content = format_json(summary)

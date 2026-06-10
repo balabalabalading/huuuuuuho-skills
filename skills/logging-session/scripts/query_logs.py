@@ -3,12 +3,20 @@ import sqlite3
 import json
 import sys
 import os
-from datetime import datetime, timedelta
 
 from config_loader import load_config
+from time_utils import local_day_start_str
 
 
-def query_logs(db_path, project=None, days=7, session_id=None, limit=100):
+def _normalize_date(d):
+    """Convert YYYYMMDD to YYYY-MM-DD. Pass through if already formatted."""
+    if d and len(d) == 8 and d.isdigit():
+        return f"{d[:4]}-{d[4:6]}-{d[6:8]}"
+    return d
+
+
+def query_logs(db_path, project=None, days=7, session_id=None, limit=100,
+              start_date=None, end_date=None):
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
@@ -16,9 +24,23 @@ def query_logs(db_path, project=None, days=7, session_id=None, limit=100):
     query = "SELECT * FROM dev_logs WHERE 1=1"
     params = []
 
-    if days:
-        query += " AND created_at >= datetime('now', ?)"
-        params.append(f"-{days} days")
+    if start_date and end_date:
+        start_date = _normalize_date(start_date)
+        end_date = _normalize_date(end_date)
+        query += " AND created_at >= ? AND created_at < datetime(?, '+1 day')"
+        params.append(start_date)
+        params.append(end_date)
+    elif start_date:
+        start_date = _normalize_date(start_date)
+        query += " AND created_at >= ?"
+        params.append(start_date)
+    elif end_date:
+        end_date = _normalize_date(end_date)
+        query += " AND created_at < datetime(?, '+1 day')"
+        params.append(end_date)
+    elif days:
+        query += " AND created_at >= ?"
+        params.append(local_day_start_str(days))
 
     if project:
         query += " AND project_name = ?"
@@ -93,6 +115,8 @@ if __name__ == "__main__":
     parser.add_argument("--db", default=None, help="Path to SQLite database (defaults to config.json)")
     parser.add_argument("--project", default=None, help="Filter by project name")
     parser.add_argument("--days", type=int, default=7, help="Look back N days (0 = all records)")
+    parser.add_argument("--start-date", default=None, help="Start date YYYYMMDD (inclusive)")
+    parser.add_argument("--end-date", default=None, help="End date YYYYMMDD (inclusive)")
     parser.add_argument("--session", default=None, help="Filter by session ID")
     parser.add_argument("--limit", type=int, default=100, help="Max results")
     parser.add_argument("--format", choices=["markdown", "ai", "json"], default="markdown",
@@ -110,7 +134,8 @@ if __name__ == "__main__":
         print("错误：未指定数据库路径。请通过 --db 指定，或在 config.json 中配置 db_path。", file=sys.stderr)
         sys.exit(1)
 
-    logs = query_logs(db_path, args.project, args.days, args.session, args.limit)
+    logs = query_logs(db_path, args.project, args.days, args.session, args.limit,
+                      args.start_date, args.end_date)
 
     if args.format == "markdown":
         content = format_markdown(logs)

@@ -3,14 +3,13 @@ import sqlite3
 import json
 import sys
 import os
-from datetime import datetime, timezone
-
 from config_loader import load_config
+from time_utils import local_now_str
 
 
 def save_log(db_path, project, session, query, thought, result,
              parent=None, category=None, files=None, git=None, meta=None):
-    now_utc = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+    now_local = local_now_str()
 
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
@@ -24,7 +23,7 @@ def save_log(db_path, project, session, query, thought, result,
     """
 
     data = (
-        now_utc,
+        now_local,
         project,
         session,
         parent,
