@@ -1,30 +1,29 @@
 ---
 name: ardot-create-new-file
 description: |
-  **MANDATORY prerequisite** — you MUST invoke this skill BEFORE every `create_new_page` tool call.
-  NEVER call `create_new_page` directly without loading this skill first.
+  **强制性前置条件** — 每次调用 `create_new_page` 工具之前，必须先调用此技能。
+  未经加载此技能，绝不能直接调用 `create_new_page`。
 
-  Trigger whenever the user wants to create a new page in an Ardot design file.
-  Keywords: "create a new page", "add a page", "new canvas" in the context of Ardot.
+  当用户想要在 Ardot 设计文件中创建新页面时触发。
+  关键词：在 Ardot 上下文中的"创建新页面"、"添加页面"、"新画布"。
 disable-model-invocation: false
 ---
 
-# ardot-create-new-file — Create a New Ardot Page
+# ardot-create-new-file — 创建新 Ardot 页面
 
-Handles page creation in Ardot design files. Lightweight prerequisite skill that 
-ensures proper page ID tracking and editor state management.
+处理 Ardot 设计文件中的页面创建。轻量级前置技能，确保正确的页面 ID 追踪和编辑器状态管理。
 
-## Workflow
+## 工作流程
 
-### Step 1: Determine the page name and position
+### 第一步：确定页面名称和位置
 
-Decide on a descriptive page name based on the user's intent:
-- `"Components"` — for reusable component libraries
-- `"Light Mode"` / `"Dark Mode"` — for theme-specific pages
-- `"Screens"` — for design mockups
-- Use `leftPageId` if the new page needs to appear after a specific existing page
+根据用户意图决定描述性页面名称：
+- `"Components"` — 用于可复用组件库
+- `"Light Mode"` / `"Dark Mode"` — 用于特定主题的页面
+- `"Screens"` — 用于设计原型
+- 如果新页面需要出现在特定现有页面之后，使用 `leftPageId`
 
-### Step 2: Call create_new_page
+### 第二步：调用 create_new_page
 
 ```json
 create_new_page({
@@ -33,43 +32,37 @@ create_new_page({
 })
 ```
 
-**Use `select: false`** by default — this creates the page without switching 
-the editor focus, allowing you to continue working on the current page.
+**默认使用 `select: false`** — 这会创建页面但不切换编辑器焦点，允许你继续在当前页面工作。
 
-Use `select: true` only when you need to immediately switch to the new page 
-for subsequent operations.
+仅当你需要立即切换到新页面进行后续操作时，才使用 `select: true`。
 
-### Step 3: Record the returned pageId
+### 第三步：记录返回的 pageId
 
-The response includes the new page's ID. **Save this immediately** — there is 
-no other way to discover page IDs later.
+响应包含新页面的 ID。**立即保存** — 之后没有其他方法可以发现页面 ID。
 
 ```
-Example response: pageId = "3:1672"
+响应示例：pageId = "3:1672"
 ```
 
-Use this pageId for:
-- Cross-page `I("3:1672", {...})` operations
-- `M("nodeId", "3:1672")` to move nodes to this page
-- `batch_read({parentId: "3:1672"})` to read this page's contents
+使用此 pageId 进行：
+- 跨页面 `I("3:1672", {...})` 操作
+- `M("nodeId", "3:1672")` 将节点移动到此页面
+- `batch_read({parentId: "3:1672"})` 读取此页面内容
 
-## Important Notes
+## 重要说明
 
-- **pageId discovery is limited**: `batch_read({})` without nodeIds only returns 
-  the currently active page's contents. You cannot enumerate all pages via batch_read.
-- **Record page IDs at creation time** — there is no `list_pages` tool.
-- **`select: true`** (the default) switches the editor to the new page. This may 
-  disrupt your workflow if you're building across multiple pages.
-- **`leftPageId`** allows inserting the new page after a specific sibling page, 
-  useful for maintaining page order.
+- **pageId 发现受限**：不带 nodeIds 的 `batch_read({})` 只返回当前活动页面的内容。无法通过 batch_read 枚举所有页面。
+- **在创建时记录页面 ID** — 没有 `list_pages` 工具。
+- **`select: true`**（默认值）会将编辑器切换到新页面。如果你正在跨多个页面构建，这可能会中断你的工作流程。
+- **`leftPageId`** 允许在特定兄弟页面之后插入新页面，有助于维护页面顺序。
 
-## Cross-page Operations Reference
+## 跨页面操作参考
 
-Once you have page IDs recorded:
+一旦你记录了页面 ID：
 
-| Operation | How | Example |
-|-----------|-----|---------|
-| Create on specific page | `I("pageId", {...})` | `I("3:1672", {type: "FRAME", ...})` |
-| Move node to page | `M("nodeId", "pageId")` | `M("3:544", "3:1672")` |
-| Read page contents | `batch_read({parentId: "pageId"})` | `batch_read({parentId: "3:1672"})` |
-| Screenshot page contents | `capture_screenshot({nodeIds: [...]})` | Cross-page by node ID |
+| 操作 | 方法 | 示例 |
+|------|------|------|
+| 在特定页面创建 | `I("pageId", {...})` | `I("3:1672", {type: "FRAME", ...})` |
+| 移动节点到页面 | `M("nodeId", "pageId")` | `M("3:544", "3:1672")` |
+| 读取页面内容 | `batch_read({parentId: "pageId"})` | `batch_read({parentId: "3:1672"})` |
+| 截图页面内容 | `capture_screenshot({nodeIds: [...]})` | 通过节点 ID 跨页面 |

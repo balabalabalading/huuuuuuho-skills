@@ -1,45 +1,42 @@
 ---
 name: ardot-style-guide
 description: |
-  Use this skill when designing from scratch or applying a visual theme to an Ardot project.
-  Covers the `search_style_guide` → `build_style_guide` workflow for discovering and 
-  applying complete design systems (colors, typography, spacing, layout patterns).
+  从头设计或为 Ardot 项目应用视觉主题时使用此技能。
+  涵盖 `search_style_guide` → `build_style_guide` 工作流程，用于发现和应用完整的设计系统（颜色、排版、间距、布局模式）。
 
-  Triggers: "design a landing page", "create a dashboard", "apply a dark theme",
-  "set up a design system", "choose a color palette", "pick fonts for my app",
-  "style guide", "visual style", "look and feel".
+  触发条件："设计落地页"、"创建仪表板"、"应用深色主题"、
+  "设置设计系统"、"选择调色板"、"为应用选择字体"、
+  "样式指南"、"视觉风格"、"外观和感觉"。
 disable-model-invocation: false
 ---
 
-# ardot-style-guide — Style Guide Search & Build
+# ardot-style-guide — 样式指南搜索与构建
 
-Discovers and applies complete design systems via the `search_style_guide` → 
-`build_style_guide` toolchain. Ardot-unique capability with no Figma equivalent.
+通过 `search_style_guide` → `build_style_guide` 工具链发现和应用完整的设计系统。Ardot 独有的能力，Figma 没有等效功能。
 
-## Skill Boundaries
+## 技能边界
 
-- Use this skill when the user wants to establish a visual style from scratch
-- Use this skill BEFORE any `batch_edit` that creates styled UI (colors, typography)
-- Skip this skill if the user already has an established design system with known tokens
-- The output of `build_style_guide` is **authoritative** — all downstream tools MUST 
-  follow its values exactly
+- 当用户想要从头建立视觉风格时使用此技能
+- 在任何创建带样式 UI（颜色、排版）的 `batch_edit` 之前使用此技能
+- 如果用户已有已建立的设计系统和已知令牌，可跳过此技能
+- `build_style_guide` 的输出是**权威性的** — 所有下游工具必须严格遵循其值
 
-## Prerequisites
+## 前置条件
 
-- `fetch_editor_state(includeSchema: true)` must have been called
-- `fetch_guidelines(topic)` should be loaded for the target design type
+- 必须已调用 `fetch_editor_state(includeSchema: true)`
+- 应为目标设计类型加载 `fetch_guidelines(topic)`
 
 ---
 
-## search_style_guide — Three-Round Fallback Protocol
+## search_style_guide — 三轮回退协议
 
-### Round 1: Keyword Search
+### 第一轮：关键词搜索
 
-Provide specific keywords to target the user's intent.
+提供特定关键词以定位用户意图。
 
 ```
 search_style_guide({
-  "topic": "landing-page",        // or web-app, mobile-app, slides, table
+  "topic": "landing-page",        // 或 web-app、mobile-app、slides、table
   "designKeywords": "SaaS dashboard modern clean professional",
   "colorKeywords": "dark mode cool blue professional",
   "typographyKeywords": "modern sans-serif clean readable",
@@ -47,45 +44,42 @@ search_style_guide({
 })
 ```
 
-**After receiving results**, review EACH domain individually:
+**收到结果后**，逐一审查每个领域：
 
-- **style**: Does the Style Category match the requested visual style?
-- **color**: Check Background, Card, and Foreground values. If user wants dark mode 
-  but all Background values are light (#F_xxxx range), this domain has NO suitable match.
-- **typography**: Does the mood match? Is the font available (check with `get_available_fonts`)?
-- **layout**: Does the pattern fit the page type?
+- **style**：样式类别是否与请求的视觉风格匹配？
+- **color**：检查背景、卡片和前景值。如果用户想要深色模式但所有背景值都是浅色（#F_xxxx 范围），则此领域没有合适匹配。
+- **typography**：情绪是否匹配？字体是否可用（使用 `get_available_fonts` 检查）？
+- **layout**：模式是否适合页面类型？
 
-If ALL candidates in a domain are suitable → proceed to `build_style_guide`.
+如果某个领域的所有候选都合适 → 继续到 `build_style_guide`。
 
-### Round 2: Full Catalog (if any domain has no suitable match)
+### 第二轮：完整目录（如果任何领域没有合适匹配）
 
-For domains with no suitable match in Round 1, call `search_style_guide` again with 
-`true` for that domain's keyword to get the full catalog:
+对于第一轮没有合适匹配的领域，再次调用 `search_style_guide`，对该领域的关键词使用 `true` 以获取完整目录：
 
 ```
 search_style_guide({
   "topic": "landing-page",
   "designKeywords": "SaaS dashboard",
-  "colorKeywords": true,           // Full catalog for colors
-  "typographyKeywords": true       // Full catalog for typography
+  "colorKeywords": true,           // 颜色的完整目录
+  "typographyKeywords": true       // 排版的完整目录
 })
 ```
 
-### Round 3: Own Design Knowledge (only if Round 2 also fails)
+### 第三轮：自身设计知识（仅在第二轮也失败时）
 
-Only for domains that still have no suitable match after Round 2, you may use your 
-own design knowledge. This should be rare.
+仅对第二轮后仍无合适匹配的领域，你可以使用自己的设计知识。这应该很少见。
 
 ---
 
-## build_style_guide — Authority Constraint
+## build_style_guide — 权威性约束
 
-Once you've made selections across all domains, call `build_style_guide`:
+一旦你在所有领域做出选择，调用 `build_style_guide`：
 
 ```json
 build_style_guide({
   "selections": {
-    "style": 2,          // Index or name from search results
+    "style": 2,          // 搜索结果中的索引或名称
     "color": 1,
     "typography": 3,
     "layout": 0
@@ -93,24 +87,24 @@ build_style_guide({
 })
 ```
 
-### CRITICAL: The returned design system is AUTHORITATIVE
+### 关键：返回的设计系统是权威性的
 
-The `build_style_guide` response provides **exact values** that MUST be used:
+`build_style_guide` 响应提供必须使用的**精确值**：
 
-- **Colors**: Use the exact `#HEX` or `{r, g, b}` values — do NOT adjust
-- **Typography**: Use the exact font family, sizes, weights specified
-- **Border radius**: Use the exact px values
-- **Spacing**: Use the exact px values
-- **Effects**: Use the exact shadow/blur parameters
+- **颜色**：使用精确的 `#HEX` 或 `{r, g, b}` 值 — 不要调整
+- **排版**：使用精确指定的字体系列、大小、粗细
+- **边框半径**：使用精确的 px 值
+- **间距**：使用精确的 px 值
+- **效果**：使用精确的阴影/模糊参数
 
-> **Hard gate**: If the design system says Background is `#FAF5FF`, use `#FAF5FF` 
-> (converted to 0–1 range for batch_edit). If you realize it conflicts with the 
-> user's intent (e.g., user wanted dark but got light), go BACK to `search_style_guide` 
-> with corrected keywords — do NOT silently override values.
+> **硬性关卡**：如果设计系统说背景是 `#FAF5FF`，使用 `#FAF5FF`
+> （转换为 0–1 范围用于 batch_edit）。如果你意识到它与用户意图冲突
+> （例如，用户想要深色但得到浅色），返回 `search_style_guide` 使用更正后的关键词
+> — 不要静默覆盖值。
 
-### Converting style guide values to batch_edit
+### 将样式指南值转换为 batch_edit
 
-Style guide hex colors → batch_edit {r, g, b} 0–1 format:
+样式指南十六进制颜色 → batch_edit {r, g, b} 0–1 格式：
 ```
 #FAF5FF → {r: 0.98, g: 0.96, b: 1.0}
 #1A1A2E → {r: 0.10, g: 0.10, b: 0.18}
@@ -119,48 +113,43 @@ Style guide hex colors → batch_edit {r, g, b} 0–1 format:
 
 ---
 
-## Selection Strategy Per Domain
+## 每个领域的选择策略
 
-### Style
-Match the Style Category name against the user's description. Trust the content 
-over the search score — a lower-scored candidate that matches the intent is better 
-than a high-scored irrelevant one.
+### 样式
+将样式类别名称与用户描述匹配。信任内容而非搜索分数 — 匹配意图的低分候选比不相关的高分候选更好。
 
-### Color
-Check Background (primary surface color), Card (secondary surface), and Foreground 
-(text/icon) values specifically. These three tell you if the palette is light or dark.
+### 颜色
+具体检查背景（主表面颜色）、卡片（次表面）和前景（文本/图标）值。这三个值告诉你调色板是浅色还是深色。
 
-### Typography
-Verify font availability with `get_available_fonts` BEFORE selecting. A font pairing 
-is useless if neither font is available. Check both heading and body fonts.
+### 排版
+在选择之前使用 `get_available_fonts` 验证字体可用性。如果两种字体都不可用，字体配对就没有用。检查标题和正文字体。
 
-### Layout
-Match the pattern name to the functional intent. For example, "pricing" → look for 
-comparison/table layouts; "dashboard" → look for card grid layouts.
+### 布局
+将模式名称与功能意图匹配。例如，"pricing" → 寻找比较/表格布局；"dashboard" → 寻找卡片网格布局。
 
 ---
 
-## topic Parameter Guide
+## topic 参数指南
 
-| topic | Use For | Typical designKeywords |
-|-------|---------|----------------------|
-| `landing-page` | Marketing pages, homepages, promotional sites | "hero section", "CTA", "features" |
-| `web-app` | SaaS dashboards, admin panels, internal tools | "dashboard", "data table", "sidebar" |
-| `mobile-app` | iOS/Android app screens | "bottom nav", "cards", "list" |
-| `slides` | Presentation decks | "title slide", "content", "chart" |
-| `table` | Data tables and dashboards | "data grid", "filters", "pagination" |
+| topic | 用途 | 典型 designKeywords |
+|-------|------|---------------------|
+| `landing-page` | 营销页面、主页、促销网站 | "hero section"、"CTA"、"features" |
+| `web-app` | SaaS 仪表板、管理面板、内部工具 | "dashboard"、"data table"、"sidebar" |
+| `mobile-app` | iOS/Android 应用屏幕 | "bottom nav"、"cards"、"list" |
+| `slides` | 演示文稿 | "title slide"、"content"、"chart" |
+| `table` | 数据表和仪表板 | "data grid"、"filters"、"pagination" |
 
 ---
 
-## Full Workflow Summary
+## 完整工作流程总结
 
 ```
 1. fetch_editor_state(includeSchema: true)
-2. fetch_guidelines(topic)                          → Design rules for the page type
-3. get_available_fonts                              → Check font availability
-4. search_style_guide (Round 1)                     → Keyword search
-5. [if needed] search_style_guide (Round 2)         → Full catalog fallback
-6. build_style_guide(selections)                    → Get authoritative design tokens
-7. apply_variables                                  → Create variables matching the tokens
-8. batch_edit                                       → Build UI using the exact token values
+2. fetch_guidelines(topic)                          → 页面类型的设计规则
+3. get_available_fonts                              → 检查字体可用性
+4. search_style_guide (第一轮)                      → 关键词搜索
+5. [如需要] search_style_guide (第二轮)             → 完整目录回退
+6. build_style_guide(selections)                    → 获取权威设计令牌
+7. apply_variables                                  → 创建与令牌匹配的变量
+8. batch_edit                                       → 使用精确的令牌值构建 UI
 ```

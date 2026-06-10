@@ -1,47 +1,45 @@
 ---
 name: ardot-generate-library
 description: |
-  Use this skill when building a reusable component library or design system in Ardot.
-  Covers the full workflow from variable/design-token creation through component 
-  building with proper variable bindings, to final verification.
+  在 Ardot 中构建可复用组件库或设计系统时使用此技能。
+  涵盖从变量/设计令牌创建到使用正确变量绑定构建组件的完整工作流程，
+  直至最终验证。
 
-  Triggers: "create a component library", "build a design system", 
-  "make reusable buttons", "create UI components", "build a component set",
-  "design system", "component library", "reusable components".
+  触发条件："创建组件库"、"构建设计系统"、
+  "制作可复用按钮"、"创建 UI 组件"、"构建组件集"、
+  "设计系统"、"组件库"、"可复用组件"。
 disable-model-invocation: false
 ---
 
-# ardot-generate-library — Build Component Libraries
+# ardot-generate-library — 构建组件库
 
-Builds reusable component libraries and design systems in Ardot. Components are 
-created with proper variable bindings so they respond to theme/mode changes.
+在 Ardot 中构建可复用组件库和设计系统。组件使用正确的变量绑定创建，以便响应主题/模式变化。
 
-## Skill Boundaries
+## 技能边界
 
-- Use this skill when building **reusable components** (buttons, cards, inputs, nav bars, etc.)
-- Use this skill when creating a **design system** with tokens and components
-- If building a one-off page/screen, use [ardot-generate-design](../ardot-generate-design/SKILL.md) instead
+- 构建**可复用组件**时使用此技能（按钮、卡片、输入框、导航栏等）
+- 创建包含令牌和组件的**设计系统**时使用此技能
+- 如果构建一次性页面/屏幕，请改用 [ardot-generate-design](../ardot-generate-design/SKILL.md)
 
-## Prerequisites
+## 前置条件
 
-- `ardot-use` — for batch_edit DSL rules, variable binding, gotchas
-- `ardot-create-new-file` — for creating the Components page
+- `ardot-use` — 用于 batch_edit DSL 规则、变量绑定、注意事项
+- `ardot-create-new-file` — 用于创建 Components 页面
 
 ---
 
-## Phase 1: Foundation
+## 阶段一：基础
 
-### 1a: Create the Components page
+### 1a：创建 Components 页面
 
 ```
 create_new_page({name: "Components", select: false})
-  → Record the pageId (e.g. "3:1672")
+  → 记录 pageId（例如 "3:1672"）
 ```
 
-### 1b: Create design tokens (variables)
+### 1b：创建设计令牌（变量）
 
-Use `apply_variables` to create the variable foundation. Components will bind to 
-these variables.
+使用 `apply_variables` 创建变量基础。组件将绑定到这些变量。
 
 ```json
 apply_variables({
@@ -109,48 +107,48 @@ apply_variables({
 })
 ```
 
-**Record all returned Variable IDs** in a tracking table for later binding.
+**在追踪表中记录所有返回的变量 ID** 以供后续绑定使用。
 
-> **Hard gate:**
-> - **Forbidden:** Creating components before variables exist
-> - **Forbidden:** Creating components with hardcoded colors (cornerRadius excepted)
+> **硬性关卡：**
+> - **禁止：** 在变量存在之前创建组件
+> - **禁止：** 使用硬编码颜色创建组件（cornerRadius 除外）
 
 ---
 
-## Phase 2: Component Creation
+## 阶段二：组件创建
 
-Build components one at a time, in dependency order:
-
-```
-Atomic (no dependencies):
-  → Button, Input, Label, Icon, Badge, Avatar, Divider
-
-Molecular (depends on atomic):
-  → Card (uses Button, Badge), NavBar (uses Button), FormField (uses Input, Label)
-```
-
-### Per-component workflow
+按依赖顺序逐个构建组件：
 
 ```
-1. batch_edit (I) → Create component with reusable:true on Components page
-   - Use boundVariables for frame fills (NOT for TEXT fills yet)
-   - TEXT children use fill: "#HEX" placeholder
-   - Record the returned component node ID
+原子组件（无依赖）：
+  → Button、Input、Label、Icon、Badge、Avatar、Divider
 
-2. batch_read → Verify the component structure
-
-3. batch_edit (U) → Bind variables to TEXT children
-   - Apply fills+boundVariables to each TEXT node
-
-4. batch_read → Verify variable bindings are present
-
-5. capture_screenshot → Visual check of the component
+分子组件（依赖原子组件）：
+  → Card（使用 Button、Badge）、NavBar（使用 Button）、FormField（使用 Input、Label）
 ```
 
-### Example: Button/Primary/md
+### 每个组件的工作流程
+
+```
+1. batch_edit (I) → 在 Components 页面上创建组件，设置 reusable:true
+   - 对框架填充使用 boundVariables（暂不用于 TEXT 填充）
+   - TEXT 子元素使用 fill: "#HEX" 占位符
+   - 记录返回的组件节点 ID
+
+2. batch_read → 验证组件结构
+
+3. batch_edit (U) → 将变量绑定到 TEXT 子元素
+   - 对每个 TEXT 节点应用 fills+boundVariables
+
+4. batch_read → 验证变量绑定存在
+
+5. capture_screenshot → 组件的视觉检查
+```
+
+### 示例：Button/Primary/md
 
 ```js
-// Step 1: Create the component
+// 第一步：创建组件
 btnPrimaryMd = I("3:1672", {
   "type": "FRAME",
   "name": "Button/Primary/md",
@@ -169,16 +167,16 @@ btnPrimaryMd = I("3:1672", {
       "fontSize": 14, "fill": "#FFFFFF"}
   ]
 })
-// Returns: btnPrimaryMd → "3:544", TEXT child → "3:545"
+// 返回：btnPrimaryMd → "3:544"，TEXT 子元素 → "3:545"
 
-// Step 3 (separate batch_edit): Bind text color variable
+// 第三步（单独的 batch_edit）：绑定文本颜色变量
 U("3:545", {
   "fills": [{"type": "SOLID", "color": {"r": 1, "g": 1, "b": 1},
     "boundVariables": {"color": {"id": "VariableID:3:15", "type": "VARIABLE_ALIAS"}}}]
 })
 ```
 
-### Example: Card with children
+### 示例：带子元素的卡片
 
 ```js
 card = I("3:1672", {
@@ -203,54 +201,54 @@ card = I("3:1672", {
 })
 ```
 
-## Phase 3: Verification
+## 阶段三：验证
 
-### 3a: Structural verification
+### 3a：结构验证
 
 ```json
 batch_read({parentId: "<ComponentsPageId>"})
 ```
 
-Check that:
-- All planned components exist with correct names
-- All have `reusable: true`
-- All have expected children
+检查：
+- 所有计划的组件存在且名称正确
+- 所有组件都有 `reusable: true`
+- 所有组件都有预期的子元素
 
-### 3b: Variable binding verification
+### 3b：变量绑定验证
 
-For each component, verify variable bindings are present:
+对于每个组件，验证变量绑定存在：
 
 ```json
 batch_read({nodeIds: ["<componentId1>", "<componentId2>", ...]})
 ```
 
-Check `fills[].boundVariables` and `strokes[].boundVariables` are not empty.
+检查 `fills[].boundVariables` 和 `strokes[].boundVariables` 不为空。
 
-### 3c: Visual verification
+### 3c：视觉验证
 
 ```json
 capture_screenshot({
-  "nodeIds": ["<all component IDs>"],
+  "nodeIds": ["<所有组件 ID>"],
   "screenShotDir": "/tmp/ardot-components"
 })
 ```
 
-Review all component screenshots for visual correctness.
+审查所有组件截图以确保视觉正确性。
 
-## Hard Gates — Forbidden Shortcuts
+## 硬性关卡 — 禁止的快捷方式
 
-- **Forbidden:** Creating components before variables exist
-- **Forbidden:** Hardcoding hex colors in component fills (use boundVariables)
-- **Forbidden:** Skipping TEXT two-step variable binding
-- **Forbidden:** Using hardcoded font sizes that don't match design tokens
-- **Forbidden:** Creating dependent (molecular) components before their atomic dependencies
+- **禁止：** 在变量存在之前创建组件
+- **禁止：** 在组件填充中硬编码十六进制颜色（使用 boundVariables）
+- **禁止：** 跳过 TEXT 两步变量绑定
+- **禁止：** 使用与设计令牌不匹配的硬编码字体大小
+- **禁止：** 在原子依赖之前创建依赖（分子）组件
 
-## Recommended Naming Convention
+## 推荐命名约定
 
 ```
-<Category>/<Variant>/<Size>
+<类别>/<变体>/<大小>
 
-Examples:
+示例：
   Button/Primary/sm
   Button/Primary/md
   Button/Primary/lg
@@ -264,4 +262,4 @@ Examples:
   Badge/Warning
 ```
 
-Use `/` as separator — this creates Figma-compatible component grouping.
+使用 `/` 作为分隔符 — 这会创建与 Figma 兼容的组件分组。
