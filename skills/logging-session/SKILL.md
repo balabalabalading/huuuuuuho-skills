@@ -129,6 +129,12 @@ python3 <skill-path>/scripts/query_logs.py \
   --days 1 \
   --format markdown
 
+# Specific date range (YYYYMMDD format, inclusive)
+python3 <skill-path>/scripts/query_logs.py \
+  --start-date 20260501 \
+  --end-date 20260515 \
+  --format markdown
+
 # Specific session's full thread
 python3 <skill-path>/scripts/query_logs.py \
   --session "<session_id>" \
@@ -153,6 +159,12 @@ python3 <skill-path>/scripts/weekly_summary.py --days 7 --format markdown
 
 # Single project, past 14 days
 python3 <skill-path>/scripts/weekly_summary.py --project "my-app" --days 14
+
+# Specific date range (YYYYMMDD format, inclusive)
+python3 <skill-path>/scripts/weekly_summary.py \
+  --start-date 20260501 \
+  --end-date 20260515 \
+  --format markdown
 
 # Export to Obsidian
 python3 <skill-path>/scripts/weekly_summary.py \
