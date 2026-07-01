@@ -38,7 +38,7 @@ create_new_page({
 
 ### 第三步：记录返回的 pageId
 
-响应包含新页面的 ID。**立即保存** — 之后没有其他方法可以发现页面 ID。
+响应包含新页面的 ID。**立即保存** — 这是后续跨页面写入和交接时最可靠的 pageId 来源。
 
 ```
 响应示例：pageId = "3:1672"
@@ -51,8 +51,8 @@ create_new_page({
 
 ## 重要说明
 
-- **pageId 发现受限**：不带 nodeIds 的 `batch_read({})` 只返回当前活动页面的内容。无法通过 batch_read 枚举所有页面。
-- **在创建时记录页面 ID** — 没有 `list_pages` 工具。
+- **pageId 发现受限**：不带 nodeIds 的 `batch_read({})` 只返回当前上下文的内容，不能作为全文件页面枚举依据。
+- **在创建时记录页面 ID** — 这是最可靠的交接方式；必要时也可以读取已知 pageId 或已知节点 ID。
 - **`select: true`**（默认值）会将编辑器切换到新页面。如果你正在跨多个页面构建，这可能会中断你的工作流程。
 - **`leftPageId`** 允许在特定兄弟页面之后插入新页面，有助于维护页面顺序。
 
@@ -64,5 +64,5 @@ create_new_page({
 |------|------|------|
 | 在特定页面创建 | `I("pageId", {...})` | `I("3:1672", {type: "FRAME", ...})` |
 | 移动节点到页面 | `M("nodeId", "pageId")` | `M("3:544", "3:1672")` |
-| 读取页面内容 | `batch_read({parentId: "pageId"})` | `batch_read({parentId: "3:1672"})` |
+| 读取页面内容 | `batch_read({nodeIds: ["pageId"], properties: ["children"], readDepth: 1})` | `batch_read({nodeIds: ["3:1672"], properties: ["children"], readDepth: 1})` |
 | 截图页面内容 | `capture_screenshot({nodeIds: [...]})` | 通过节点 ID 跨页面 |

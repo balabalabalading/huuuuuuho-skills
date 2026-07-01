@@ -11,7 +11,7 @@
 5. [variableModes are unreliable](#5-variablemodes-are-unreliable)
 6. [Cross-page insertion needs explicit pageId](#6-cross-page-insertion-needs-explicit-pageid)
 7. [batch_read can't discover all page IDs](#7-batch_read-cant-discover-all-page-ids)
-8. [M() target must be pageId not frameId](#8-m-target-must-be-pageid-not-frameid)
+8. [M() target parent and index must be valid](#8-m-target-parent-and-index-must-be-valid)
 
 ---
 
@@ -168,44 +168,47 @@ I("3:1672", {"type": "FRAME", "name": "Button", "reusable": true, ...})
 
 ---
 
-## 7. batch_read can't discover all page IDs
+## 7. batch_read page discovery is limited
 
-**Symptom**: Calling `batch_read({})` without nodeIds only returns nodes from the 
-currently active page — you can't discover other pages this way.
+**Symptom**: Calling `batch_read({})` without nodeIds only returns the top-level
+children for the current context, which is not a reliable way to enumerate all pages
+in a large document.
 
 ```js
-// WRONG — assuming this returns ALL pages
+// WRONG — assuming this returns ALL pages in the file
 batch_read({})  
-// Only returns top-level children of the CURRENT active page
+// It may only return the current context, depending on editor state
 ```
 
 ```js
-// CORRECT — record page IDs at creation time
+// CORRECT — record page IDs at creation time and store them in your handoff/manifest
 // When creating pages:
 page = create_new_page({name: "Components", select: false})
 // → Returns pageId: "3:1672" — SAVE THIS
 
-// To read from a known page, use a known node ID on that page:
+// To read from a known page, use the page ID or a known node ID:
+batch_read({nodeIds: ["3:1672"]})
 batch_read({nodeIds: ["3:914"]})  // Cross-page read works with known IDs
 ```
 
 ---
 
-## 8. M() target must be pageId not frameId
+## 8. M() target parent and index must be valid
 
-**Symptom**: Attempting to move a node into another frame (within the same page) 
-via M() doesn't work as expected.
+**Symptom**: Attempting to move a node via M() doesn't work as expected, or the node
+appears in the wrong layer order.
 
 ```js
-// WRONG — M() only moves between pages, not within a page
-M("3:544", "3:100")  // If 3:100 is a frame (not a page), this won't work right
+// WRONG — target parent does not exist, or index is invalid for that parent's children
+M("3:544", "missing-parent")
+M("3:544", "3:100", 999)
 ```
 
 ```js
-// CORRECT — M() is only for cross-page moves
-M("3:544", "3:1672")  // 3:1672 is the Components PAGE ID
+// CORRECT — use a valid page or frame parent, optionally with a valid index
+M("3:544", "3:1672")     // move to Components page
+M("3:544", "3:100", 0)   // move into frame 3:100 as first child
 
-// For reparenting within the same page:
-// Option A: Delete and recreate inside the target frame
-// Option B: Restructure via U() if the node supports parent reassignment
+// Then verify:
+batch_read({nodeIds: ["3:100"], properties: ["children"], readDepth: 1})
 ```

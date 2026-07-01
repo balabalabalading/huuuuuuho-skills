@@ -58,7 +58,7 @@ ardot-use ──→ 无（但被其他 4 个依赖）
 5. variableModes 不可靠
 6. 跨页写入需指定 pageId
 7. batch_read 无法发现所有页面 ID
-8. M() 目标必须是 pageId
+8. M() 目标父节点和 index 必须有效
 
 ## 参照来源
 

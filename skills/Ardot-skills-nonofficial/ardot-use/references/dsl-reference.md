@@ -142,10 +142,10 @@ U("3:544", {"x": 100, "y": 200})
 
 ## M() — Move Node
 
-Moves a node from one page to another.
+Moves a node to a new parent. The parent may be a page or a frame.
 
 ```
-M("nodeId", "targetPageId")
+M("nodeId", "parentId", index?)
 ```
 
 ### Parameters
@@ -153,18 +153,20 @@ M("nodeId", "targetPageId")
 | Param | Required | Description |
 |-------|----------|-------------|
 | `nodeId` | Yes | Node to move |
-| `targetPageId` | Yes | Target PAGE ID — must be a page, NOT a frame |
+| `parentId` | Yes | Target parent node ID. Can be a page or frame. |
+| `index` | No | Optional insertion index among the target parent's children |
 
 ### Notes
 
-- Node retains its original ID after moving
-- Component instances remain connected to their source component after moving
-- Cannot be used to reparent within the same page (page-to-frame nesting)
+- Node retains its original ID after moving.
+- Component instances remain connected to their source component after moving.
+- After moving, verify the target parent's `children` order with `batch_read`.
 
 ### Example
 
 ```js
-M("3:544", "3:1672")  // Move button to Components page
+M("3:544", "3:1672")     // Move button to Components page
+M("3:544", "3:200", 0)   // Move button into frame 3:200 at index 0
 ```
 
 ---
@@ -196,10 +198,10 @@ D("3:544")  // Deletes node 3:544 and all its descendants
 
 ## C() — Create Component Instance
 
-Creates an instance of a reusable component.
+Creates an instance of a reusable component under a parent node.
 
 ```
-C("componentId")
+bindingName = C("componentId", "parentId", copyNodeData?)
 ```
 
 ### Parameters
@@ -207,15 +209,18 @@ C("componentId")
 | Param | Required | Description |
 |-------|----------|-------------|
 | `componentId` | Yes | ID of the reusable component to instantiate |
+| `parentId` | Yes | Parent node to receive the instance |
+| `copyNodeData` | No | Optional overrides such as x/y, width/height, or descendants |
 
 ### Notes
 
 - Instance inherits all properties from the source component
-- Position (x, y) must be set via subsequent U() call
+- Position and size may be set in `copyNodeData`; use subsequent U() only when needed
 - Changes to the source component propagate to all instances
+- Use `descendants` in `copyNodeData` when overriding children inside copied component instances
 
 ```js
-instance = C("3:544")  // Create instance of component 3:544
+instance = C("3:544", "3:200", {x: 24, y: 200})  // Create instance of component 3:544 inside parent 3:200
 // Returns binding: instance → "3:1200"
 ```
 
@@ -223,11 +228,17 @@ instance = C("3:544")  // Create instance of component 3:544
 
 ## G() — Generate Image
 
-AI-generated image or graphic. Use sparingly — results are non-deterministic and slow.
+Applies an AI-generated or stock image fill to an existing frame/shape node.
+Use sparingly — results are non-deterministic and slow.
 
 ```
-G("prompt description")
+imageFrame = I("3:1672", {type: "FRAME", name: "Hero Image", width: 400, height: 240})
+G(imageFrame, "ai", "clean dashboard hero image")
+G("3:544", "stock", "")
 ```
+
+There is no standalone image node type. Create a frame or shape first, then use
+G() to apply the image as that node's fill.
 
 ---
 

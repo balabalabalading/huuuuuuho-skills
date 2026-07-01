@@ -46,11 +46,11 @@ Check for:
 ### Check a page's structure
 
 ```json
-// Read all top-level frames on the current page
+// Read top-level nodes for the current context
 batch_read({})
 
 // Read a specific page's children (cross-page)
-batch_read({parentId: "3:1672"})
+batch_read({nodeIds: ["3:1672"], properties: ["children"], readDepth: 1})
 ```
 
 ### The `updated: {}` verification pattern
@@ -97,13 +97,13 @@ Operation fails
   ├─ Read the error message carefully
   │   Common causes:
   │   - Invalid node ID (using binding name from previous call)
-  │   - Wrong pageId (using frameId instead of pageId)
+  │   - Wrong parentId or invalid insertion index
   │   - Syntax error in DSL string
   │   - Exceeded 25 operations limit
   │
   ├─ Fix the root cause
   │   - Replace binding names with real node IDs
-  │   - Verify pageId is a page, not a frame
+  │   - Verify parentId exists and the index is valid for its children
   │   - Check JSON syntax in the operations string
   │   - Split into multiple calls if over 25 operations
   │
@@ -139,14 +139,16 @@ safely fix and retry.
 
 ```
 1. M() → move node
-2. batch_read({parentId: "targetPageId"}) → verify node appears on target page
+2. batch_read({nodeIds: ["targetParentId"], properties: ["children"], readDepth: 1})
+   → verify node appears under the target parent in the intended order
 ```
 
 ### For creating instances (C)
 
 ```
-1. C() → create instance
-2. U() → set x, y position
+1. C("componentId", "parentId", {x, y, width, height}) → create instance
+2. batch_read({nodeIds: ["parentId"], properties: ["children"], readDepth: 1})
+   → verify instance appears under the target parent
 3. capture_screenshot → verify instance appears correctly positioned
 ```
 

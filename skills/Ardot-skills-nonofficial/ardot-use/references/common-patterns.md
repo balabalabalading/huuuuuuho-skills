@@ -187,14 +187,10 @@ btnSecondary = I("3:1672", {
 ## 7. Create component instances and position them
 
 ```js
-// Create instances of a reusable button
-btn1 = C("3:544")   // Button/Primary/md instance
-btn2 = C("3:544")   // Another instance of the same component
+// Create instances of a reusable button under parent frame 3:200
+btn1 = C("3:544", "3:200", {x: 24, y: 200})   // Button/Primary/md instance
+btn2 = C("3:544", "3:200", {x: 200, y: 200})  // Another instance of the same component
 // Returns: btn1 → "3:1200", btn2 → "3:1201"
-
-// Position the instances
-U("3:1200", {"x": 24, "y": 200})
-U("3:1201", {"x": 200, "y": 200})
 ```
 
 ---
@@ -219,5 +215,6 @@ nav = I("0:1", {
 })
 ```
 
-For explicit gaps between children, use `gap` property (if supported) or add 
-spacer frames between items.
+For explicit gaps between children, use `itemSpacing` on auto-layout frames.
+Use spacer frames only when the target layout cannot be represented with
+`itemSpacing`.

@@ -28,7 +28,7 @@ disable-model-invocation: false
 
 **5. 跨页面插入需要在 I() 中明确指定 `pageId`。** 默认情况下，I() 在当前活动页面上创建节点。要在不同页面上创建，使用 `I("pageId", {...})`。
 
-**6. M() 目标必须是 pageId，不是 frameId。** M() 仅支持在页面之间移动节点。要在同一页面内重新设置父节点，删除并重新创建或通过 U() 重新构建。
+**6. M() 可以移动节点到新的父容器。** 第二个参数应是有效的父节点 ID（page 或 frame），可选第三个参数用于指定 sibling index。移动后必须读取目标父节点验证层级。
 
 **7. 不支持 cornerRadius 变量绑定。** Ardot 目前不支持 `cornerRadius` 的 `boundVariables`。使用硬编码数值代替（例如 `cornerRadius: 6`）。
 
@@ -36,7 +36,7 @@ disable-model-invocation: false
 
 **9. 始终 `return` 所有创建/修改的节点 ID。** 每个 `batch_edit` 响应都包含绑定名称和节点 ID。记录这些 — 在后续调用中需要它们。
 
-**10. 增量构建。** 先用占位符构建骨架，然后逐个区块填充细节。每个 `use_figma` 脚本失败都是原子性的 — 文件不会被修改。
+**10. 增量构建。** 先用占位符构建骨架，然后逐个区块填充细节。每个 `batch_edit` 调用失败都是原子性的 — 文件不会被修改。
 
 **11. 截图与编辑分离。** 不要在 `batch_edit` 操作中混合 `capture_screenshot` 调用。截图作为单独的验证步骤。
 
@@ -46,10 +46,10 @@ disable-model-invocation: false
 |--------|------|------|----------|
 | `I` | `I("pageId", {type, name, ...})` | 插入新节点 | `reusable: true` 用于组件；`width: "hug_contents"\|"fill_container"` |
 | `U` | `U("nodeId", {props...})` | 更新现有节点 | 必须使用真实节点 ID，不能使用先前调用的绑定名称 |
-| `M` | `M("nodeId", "pageId")` | 在页面之间移动节点 | 目标必须是 pageId，不是 frameId |
+| `M` | `M("nodeId", "parentId", index?)` | 移动节点 | 目标是新的父节点 ID，可选 index |
 | `D` | `D("nodeId")` | 删除节点 | 删除父节点会级联到所有子节点 |
-| `C` | `C("componentId")` | 创建组件实例 | 实例继承组件属性；通过后续 U() 设置 x/y |
-| `G` | `G(...)` | AI 生成的图像/图形 | 较慢；结果是非确定性的 |
+| `C` | `C("componentId", "parentId", {props...})` | 创建组件实例 | 在指定父节点下创建组件实例，可在 copyNodeData 中设置尺寸、位置或 descendants |
+| `G` | `G("nodeId", "ai"\|"stock", "prompt")` | 为已有 frame/shape 应用图片填充 | 先创建承载节点，再调用 G() |
 
 ### I() — 插入节点
 
@@ -99,22 +99,24 @@ U("3:1676", {
 })
 ```
 
-### M() — 跨页面移动
+### M() — 移动节点
 
 ```js
-M("3:544", "3:1672")  // 将节点 3:544 移动到 Components 页面
+M("3:544", "3:1672")     // 将节点 3:544 移动到 Components 页面
+M("3:544", "3:200", 0)   // 将节点 3:544 移动到 frame 3:200 的第一个位置
 ```
 
 - 节点在移动后保留其原始 ID
 - 移动源组件不会破坏组件实例
+- 移动后用 `batch_read({parentId: "<parentId>"})` 或读取父节点 children 验证
 
 ### C() — 创建组件实例
 
 ```js
-C("3:544")  // 创建组件 3:544 的实例
+btn = C("3:544", "3:200", {x: 24, y: 200})  // 在父节点 3:200 下创建组件 3:544 的实例
 ```
 
-- 通过后续 U() 调用设置 x/y 位置
+- 在 copyNodeData 中可设置 x/y、width/height，或用 descendants 覆盖实例内部文本/属性
 
 ## 3. 变量绑定模式
 
@@ -184,7 +186,7 @@ U("<textNodeId>", {
 - [ ] I() 在正确的页面上创建（跨页面时明确指定 pageId）
 - [ ] TEXT 节点使用 `fill: "#HEX"`（不是带有 boundVariables 的 fills 数组）
 - [ ] U() 和 M() 使用真实节点 ID（不是先前调用的绑定名称）
-- [ ] M() 目标是 pageId，不是 frameId
+- [ ] M() 目标是有效父节点 ID；如指定 index，确认 index 在目标父节点 children 范围内
 - [ ] 颜色值在 {r, g, b} 0–1 范围内，不是 0–255
 - [ ] cornerRadius 使用硬编码数值，不是 boundVariables
 - [ ] 所有创建的节点 ID 已捕获以供后续参考
@@ -200,8 +202,8 @@ U("<textNodeId>", {
 | TEXT 变量绑定不工作 | 在 I() 中使用了 fills+boundVariables | 两步法：I() 使用 fill:"#HEX"，然后 U() 使用 fills+boundVariables |
 | 绑定名称未识别 | 使用了先前 batch_edit 的绑定名称 | 在下一个调用中使用真实节点 ID（例如 "3:544"） |
 | cornerRadius 变量未绑定 | Ardot 不支持此功能 | 使用硬编码值（例如 cornerRadius: 6） |
-| M() 将节点移到错误位置 | 目标是 frameId，不是 pageId | 确保目标是页面 ID，不是框架 ID |
-| 无法发现其他页面 ID | 不带 nodeIds 的 batch_read 只返回当前页面 | 从 create_new_page 返回值记录页面 ID |
+| M() 将节点移到错误位置 | 目标父节点 ID 或 index 错误 | 读取目标父节点 children，确认层级和顺序 |
+| 无法可靠枚举页面 ID | 不带 nodeIds 的 batch_read 只返回当前上下文 | 从 create_new_page 返回值记录页面 ID，并在交接记录中保存 |
 | variableModes 未生效 | 功能可能不稳定 | 使用单独的页面表示浅色/深色模式变体 |
 
 ## 7. 参考文档
