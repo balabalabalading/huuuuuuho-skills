@@ -53,6 +53,23 @@ batch_read({})
 batch_read({nodeIds: ["3:1672"], properties: ["children"], readDepth: 1})
 ```
 
+### Inspect component instance internals
+
+To override text inside a component instance (e.g. table column headers/cells, button labels), you need the child node IDs inside the instance. Use `resolveInstances: true` to expand the instance's internal tree:
+
+```json
+batch_read({
+  nodeIds: ["3:1200"],          // an existing instance
+  resolveInstances: true,
+  readDepth: 3,
+  properties: ["type", "name", "characters"]
+})
+```
+
+- Returned child IDs use the format `instanceId;childId` (e.g. `"3:1200;2:47"`).
+- Multi-level paths like `"3:1200;2:937;46879:365251"` work in `U()` when using **real IDs** - use them to update nested TEXT via `{characters: "..."}`.
+- Read **one representative instance** to learn the paths, then reuse them for all sibling instances of the same component - do not re-read each one.
+
 ### The `updated: {}` verification pattern
 
 ```js

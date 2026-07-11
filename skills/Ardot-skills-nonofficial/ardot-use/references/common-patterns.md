@@ -12,6 +12,7 @@
 6. [Move components to a Components page](#6-move-components-to-a-components-page)
 7. [Create component instances and position them](#7-create-component-instances-and-position-them)
 8. [Apply spacing between auto-layout children](#8-apply-spacing-between-auto-layout-children)
+9. [Create component instances with variant selection (I + ref)](#9-create-component-instances-with-variant-selection-i--ref)
 
 ---
 
@@ -89,7 +90,7 @@ U("3:915", {
 })
 ```
 
-**Variable ID format**: `"VariableID:<page>:<id>"` — e.g. `"VariableID:3:14"`.
+**Variable ID format**: `"VariableID:<page>:<id>"` - e.g. `"VariableID:3:14"`.
 Obtain IDs from `apply_variables` return values or `fetch_variables` output.
 
 ---
@@ -105,7 +106,7 @@ title = I("0:1", {
   "fontSize": 24,
   "fill": "#1A1A1A"
 })
-// Returns: title → "3:1680"
+// Returns: title -> "3:1680"
 
 // Step 2 (separate batch_edit call): Bind the color variable
 U("3:1680", {
@@ -165,21 +166,21 @@ btnSecondary = I("0:1", {
     {"type": "TEXT", "characters": "Cancel", "fontSize": 14, "fill": "#333333"}
   ]
 })
-// Returns: btnSecondary → "3:545"
+// Returns: btnSecondary -> "3:545"
 
 // Move it to Components page
 M("3:545", "3:1672")
 // Component remains at 3:545, now on Components page
 ```
 
-**Alternative — create directly on Components page:**
+**Alternative - create directly on Components page:**
 
 ```js
 btnSecondary = I("3:1672", {
   "type": "FRAME", "name": "Button/Secondary/md",
   "reusable": true, ...
 })
-// Directly on Components page — no M() needed
+// Directly on Components page - no M() needed
 ```
 
 ---
@@ -190,7 +191,7 @@ btnSecondary = I("3:1672", {
 // Create instances of a reusable button under parent frame 3:200
 btn1 = C("3:544", "3:200", {x: 24, y: 200})   // Button/Primary/md instance
 btn2 = C("3:544", "3:200", {x: 200, y: 200})  // Another instance of the same component
-// Returns: btn1 → "3:1200", btn2 → "3:1201"
+// Returns: btn1 -> "3:1200", btn2 -> "3:1201"
 ```
 
 ---
@@ -218,3 +219,36 @@ nav = I("0:1", {
 For explicit gaps between children, use `itemSpacing` on auto-layout frames.
 Use spacer frames only when the target layout cannot be represented with
 `itemSpacing`.
+
+---
+
+## 9. Create component instances with variant selection (I + ref)
+
+When you need a specific component variant or to set text/placeholder at creation, use `I()` with `type: "ref"` instead of `C()`. `componentProperties` selects the variant and sets TEXT/BOOLEAN properties in one step - no follow-up U() needed for the label.
+
+```js
+// Create a primary button instance with a custom label
+btn = I("3:200", {
+  "type": "ref",
+  "ref": "3:544",                  // COMPONENT_SET ID
+  "name": "Button / Submit",
+  "componentProperties": {
+    "variant 类型": "base 基础",
+    "size 尺寸": "medium 中尺寸",
+    "theme 主题样式": "primary 主要",
+    "text#97937:700": "提交"         // set button text at creation
+  },
+  "width": 80,
+  "height": 32
+})
+```
+
+Read property names from the component's `componentPropertyDefinitions` first (via `batch_read` on the COMPONENT_SET or an existing instance) - they contain hashes and exact strings you cannot guess.
+
+To change text on an **already-created** instance, do NOT use `componentProperties` in U() (TEXT updates fail) - instead update the instance's internal TEXT node directly:
+
+```js
+U("3:1200;2:47", {characters: "保存"})   // real instance ID + child text path
+```
+
+See dsl-reference.md §I() for the full `ref` syntax, and gotchas.md for the componentProperties creation-vs-update boundary.

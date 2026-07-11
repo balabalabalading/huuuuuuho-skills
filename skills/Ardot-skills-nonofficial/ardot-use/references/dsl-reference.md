@@ -1,47 +1,47 @@
-# DSL Reference — batch_edit Operators
+# DSL Reference - batch_edit Operators
 
 > Part of the [ardot-use skill](../SKILL.md). Complete reference for all `batch_edit` DSL operators.
 
 ## Contents
 
-1. [I() — Insert Node](#i--insert-node)
-2. [U() — Update Node](#u--update-node)
-3. [M() — Move Node](#m--move-node)
-4. [D() — Delete Node](#d--delete-node)
-5. [C() — Create Component Instance](#c--create-component-instance)
-6. [G() — Generate Image](#g--generate-image)
+1. [I() - Insert Node](#i--insert-node)
+2. [U() - Update Node](#u--update-node)
+3. [M() - Move Node](#m--move-node)
+4. [D() - Delete Node](#d--delete-node)
+5. [C() - Create Component Instance](#c--create-component-instance)
+6. [G() - Generate Image](#g--generate-image)
 7. [Common Properties](#common-properties)
 
 ---
 
-## I() — Insert Node
+## I() - Insert Node
 
-Creates a new node on a specified page. Every I() call MUST include a binding name.
+Creates a new node under a specified parent. Every I() call MUST include a binding name.
 
 ```
-bindingName = I("pageId", {nodeProperties})
+bindingName = I("parentId", {nodeProperties})
 ```
 
 ### Parameters
 
 | Param | Required | Description |
 |-------|----------|-------------|
-| `pageId` | Yes | Target page ID (e.g. `"3:1672"`, or use `"0:1"` for default page) |
+| `parentId` | Yes | Target page/frame ID, or a binding created earlier in the same call |
 | `nodeProperties` | Yes | Object describing the node to create |
 
 ### Key Properties
 
 | Property | Type | Description |
 |----------|------|-------------|
-| `type` | string | `"FRAME"`, `"TEXT"`, `"RECTANGLE"`, `"ELLIPSE"`, etc. |
+| `type` | string | `"FRAME"`, `"TEXT"`, `"RECTANGLE"`, `"ELLIPSE"`, `"ref"` (component instance via `ref`+`componentProperties`, see below), etc. |
 | `name` | string | Display name in the layer panel |
 | `reusable` | boolean | Set `true` to create a component (only for FRAME type) |
 | `width` | number or string | Numeric px value, `"hug_contents"`, or `"fill_container"` |
 | `height` | number or string | Numeric px value, `"hug_contents"`, or `"fill_container"` |
 | `x` | number | X position (optional; 0 if omitted) |
 | `y` | number | Y position (optional; 0 if omitted) |
-| `layout` | string | `"horizontal"` or `"vertical"` — enables auto-layout |
-| `paddingLeft/Right/Top/Bottom` | number | Inner padding (px) — requires `layout` |
+| `layout` | string | `"horizontal"` or `"vertical"` - enables auto-layout |
+| `paddingLeft/Right/Top/Bottom` | number | Inner padding (px) - requires `layout` |
 | `primaryAxisAlignItems` | string | `"MIN"`, `"CENTER"`, `"MAX"` |
 | `counterAxisAlignItems` | string | `"MIN"`, `"CENTER"`, `"MAX"` |
 | `fills` | array | Array of fill objects (see fills format below) |
@@ -66,7 +66,34 @@ bindingName = I("pageId", {nodeProperties})
 
 Colors use **0–1 range** (not 0–255, not hex).
 
-### TEXT node in I() — special rule
+### Creating component instances with `type: "ref"`
+
+I() also creates component instances when `type: "ref"` and `ref` point to a COMPONENT_SET. Prefer this over C() when you need to select a variant or set text/boolean properties at creation time.
+
+```js
+btn = I("3:200", {
+  "type": "ref",
+  "ref": "3:544",              // COMPONENT_SET ID
+  "name": "Button / Submit",
+  "componentProperties": {
+    "variant 类型": "base 基础",     // VARIANT - select a variant option
+    "size 尺寸": "medium 中尺寸",
+    "text#97937:700": "提交"         // TEXT - settable at creation
+  },
+  "width": 80,
+  "height": 32
+})
+```
+
+- `componentProperties` sets VARIANT/TEXT/BOOLEAN properties defined on the component set.
+- Property names come from the component's `componentPropertyDefinitions` - read them via `batch_read` on the COMPONENT_SET or an existing instance first; do not guess (they contain hashes and exact strings).
+- `width`/`height` override the component's default size.
+
+**I()+ref vs C()**: `C(componentId, parentId, {descendants})` copies a component and overrides children via `descendants` - use for pure duplication. `I(parent, {type:"ref", ref, componentProperties})` selects a variant and sets properties at creation - use when a specific variant or text/placeholder is needed.
+
+**Important**: `componentProperties` TEXT/VARIANT work in I() (creation), but TEXT updates fail in U() on already-created instances (see gotchas). To change text on an existing instance, update its internal TEXT node directly: `U("instanceId;childTextId", {characters: "..."})`.
+
+### TEXT node in I() - special rule
 
 TEXT children inside I() MUST use `"fill": "#HEX"` string format. They CANNOT use 
 `fills: [{boundVariables: {...}}]`. Variable binding must be done in a separate 
@@ -107,7 +134,7 @@ btn = I("3:1672", {
 
 ---
 
-## U() — Update Node
+## U() - Update Node
 
 Modifies properties of an existing node.
 
@@ -119,7 +146,7 @@ U("nodeId", {propertiesToUpdate})
 
 | Param | Required | Description |
 |-------|----------|-------------|
-| `nodeId` | Yes | Real node ID (e.g. `"3:544"`) — NOT a binding name from a previous call |
+| `nodeId` | Yes | Real node ID (e.g. `"3:544"`) - NOT a binding name from a previous call |
 | `properties` | Yes | Object with only the properties to change |
 
 ### Examples
@@ -131,7 +158,7 @@ U("3:914", {
     "boundVariables": {"color": {"id": "VariableID:3:10", "type": "VARIABLE_ALIAS"}}}]
 })
 
-// Change corner radius (hardcoded — variable binding not supported)
+// Change corner radius (hardcoded - variable binding not supported)
 U("3:914", {"cornerRadius": 12})
 
 // Set position
@@ -140,7 +167,7 @@ U("3:544", {"x": 100, "y": 200})
 
 ---
 
-## M() — Move Node
+## M() - Move Node
 
 Moves a node to a new parent. The parent may be a page or a frame.
 
@@ -171,7 +198,7 @@ M("3:544", "3:200", 0)   // Move button into frame 3:200 at index 0
 
 ---
 
-## D() — Delete Node
+## D() - Delete Node
 
 Deletes a node and all its children.
 
@@ -187,7 +214,7 @@ D("nodeId")
 
 ### Warning
 
-Deleting a parent node **cascades** — all children are also deleted. 
+Deleting a parent node **cascades** - all children are also deleted.
 Be careful when deleting frames that contain many children.
 
 ```js
@@ -196,7 +223,7 @@ D("3:544")  // Deletes node 3:544 and all its descendants
 
 ---
 
-## C() — Create Component Instance
+## C() - Create Component Instance
 
 Creates an instance of a reusable component under a parent node.
 
@@ -221,15 +248,15 @@ bindingName = C("componentId", "parentId", copyNodeData?)
 
 ```js
 instance = C("3:544", "3:200", {x: 24, y: 200})  // Create instance of component 3:544 inside parent 3:200
-// Returns binding: instance → "3:1200"
+// Returns binding: instance -> "3:1200"
 ```
 
 ---
 
-## G() — Generate Image
+## G() - Generate Image
 
 Applies an AI-generated or stock image fill to an existing frame/shape node.
-Use sparingly — results are non-deterministic and slow.
+Use sparingly - results are non-deterministic and slow.
 
 ```
 imageFrame = I("3:1672", {type: "FRAME", name: "Hero Image", width: 400, height: 240})
@@ -265,4 +292,4 @@ All colors use **0–1 range** for r, g, b components:
 {"r": 0.91, "g": 0.44, "b": 0.29}
 ```
 
-This represents a warm orange (#E8714A in hex → r=232/255≈0.91, g=113/255≈0.44, b=74/255≈0.29).
+This represents a warm orange (#E8714A in hex -> r=232/255≈0.91, g=113/255≈0.44, b=74/255≈0.29).

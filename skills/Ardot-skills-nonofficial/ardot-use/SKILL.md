@@ -26,7 +26,7 @@ disable-model-invocation: false
 
 **4. `updated: {}` 不代表失败。** U() 操作通常返回 `updated: {}` 而不是 `updated: {"nodeId": {...}}`。操作可能已成功 — 通过立即运行 `batch_read` 验证节点，而不是信任返回值。
 
-**5. 跨页面插入需要在 I() 中明确指定 `pageId`。** 默认情况下，I() 在当前活动页面上创建节点。要在不同页面上创建，使用 `I("pageId", {...})`。
+**5. I() 必须指定父节点。** 第一个参数可以是 page、frame 的真实 ID，或同一次调用中已创建的 binding；跨页面插入时使用目标 pageId。
 
 **6. M() 可以移动节点到新的父容器。** 第二个参数应是有效的父节点 ID（page 或 frame），可选第三个参数用于指定 sibling index。移动后必须读取目标父节点验证层级。
 
@@ -44,7 +44,7 @@ disable-model-invocation: false
 
 | 操作符 | 语法 | 用途 | 关键说明 |
 |--------|------|------|----------|
-| `I` | `I("pageId", {type, name, ...})` | 插入新节点 | `reusable: true` 用于组件；`width: "hug_contents"\|"fill_container"` |
+| `I` | `I("parentId", {type, name, ...})` | 插入新节点 | parent 可以是 page、frame 或同批次 binding；`reusable: true` 用于组件 |
 | `U` | `U("nodeId", {props...})` | 更新现有节点 | 必须使用真实节点 ID，不能使用先前调用的绑定名称 |
 | `M` | `M("nodeId", "parentId", index?)` | 移动节点 | 目标是新的父节点 ID，可选 index |
 | `D` | `D("nodeId")` | 删除节点 | 删除父节点会级联到所有子节点 |
@@ -183,7 +183,7 @@ U("<textNodeId>", {
 
 - [ ] 总操作数 ≤ 25（建议 ≤ 20）
 - [ ] 所有父引用使用此调用中的绑定名称，而非先前调用的
-- [ ] I() 在正确的页面上创建（跨页面时明确指定 pageId）
+- [ ] I() 使用有效父节点（跨页面时明确指定目标 pageId）
 - [ ] TEXT 节点使用 `fill: "#HEX"`（不是带有 boundVariables 的 fills 数组）
 - [ ] U() 和 M() 使用真实节点 ID（不是先前调用的绑定名称）
 - [ ] M() 目标是有效父节点 ID；如指定 index，确认 index 在目标父节点 children 范围内
@@ -198,7 +198,7 @@ U("<textNodeId>", {
 | 错误/症状 | 可能原因 | 修复方法 |
 |-----------|----------|----------|
 | U() 返回 `updated: {}` | 正常 — 操作可能已成功 | 使用 batch_read 验证，不要信任返回值 |
-| 节点创建在错误的页面上 | I() 中缺少明确的 pageId | 使用 `I("pageId", {...})` 代替 `I({...})` |
+| 节点创建在错误的位置 | I() 的父节点错误 | 使用目标 pageId、frameId 或同批次 binding 作为第一个参数 |
 | TEXT 变量绑定不工作 | 在 I() 中使用了 fills+boundVariables | 两步法：I() 使用 fill:"#HEX"，然后 U() 使用 fills+boundVariables |
 | 绑定名称未识别 | 使用了先前 batch_edit 的绑定名称 | 在下一个调用中使用真实节点 ID（例如 "3:544"） |
 | cornerRadius 变量未绑定 | Ardot 不支持此功能 | 使用硬编码值（例如 cornerRadius: 6） |
@@ -210,7 +210,7 @@ U("<textNodeId>", {
 
 | 参考 | 内容 |
 |------|------|
-| [注意事项](references/gotchas.md) | 所有 8 个已知陷阱，包含错误/正确示例 |
+| [注意事项](references/gotchas.md) | 已知陷阱与错误/正确示例 |
 | [DSL 参考](references/dsl-reference.md) | 完整的 I/U/M/D/C/G 操作符参考 |
 | [常用模式](references/common-patterns.md) | 常用操作模式 |
 | [变量模式](references/variable-patterns.md) | apply_variables + batch_edit 绑定模式 |
