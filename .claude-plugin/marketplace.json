@@ -10,59 +10,60 @@
   "plugins": [
     {
       "name": "mp-article-writor",
-      "description": "公众号长文生成：9步工作流，从素材到终稿",
+      "version": "2.0.0",
+      "description": "微信公众号静态图文生成：11步写作、视觉生产和交付工作流",
       "source": "./skills/mp-article-writor",
       "strict": false,
-      "skills": ["."]
+      "skills": ["./"]
     },
     {
       "name": "logging-session",
       "description": "AI 编码会话记录与查询，支持 Obsidian 集成",
       "source": "./skills/logging-session",
       "strict": false,
-      "skills": ["."]
+      "skills": ["./"]
     },
     {
       "name": "article2ticktick",
       "description": "技术周报文章批量/单篇添加到滴答清单",
       "source": "./skills/article2ticktick",
       "strict": false,
-      "skills": ["."]
+      "skills": ["./"]
     },
     {
       "name": "ardot-use",
       "description": "Ardot batch_edit DSL 核心技能 — 所有写操作的强制前提，包含操作符参考、变量绑定模式、已知坑点和错误恢复",
       "source": "./skills/Ardot-skills-nonofficial/ardot-use",
       "strict": false,
-      "skills": ["."]
+      "skills": ["./"]
     },
     {
       "name": "ardot-create-new-file",
       "description": "创建新 Ardot 页面的强制前提技能",
       "source": "./skills/Ardot-skills-nonofficial/ardot-create-new-file",
       "strict": false,
-      "skills": ["."]
+      "skills": ["./"]
     },
     {
       "name": "ardot-style-guide",
       "description": "Ardot 样式指南搜索和构建技能，包含三轮回退协议和权威性约束",
       "source": "./skills/Ardot-skills-nonofficial/ardot-style-guide",
       "strict": false,
-      "skills": ["."]
+      "skills": ["./"]
     },
     {
       "name": "ardot-generate-design",
       "description": "从零构建完整页面/视图的高级工作流，编排多工具协作",
       "source": "./skills/Ardot-skills-nonofficial/ardot-generate-design",
       "strict": false,
-      "skills": ["."]
+      "skills": ["./"]
     },
     {
       "name": "ardot-generate-library",
       "description": "构建可复用组件库和设计系统的工作流",
       "source": "./skills/Ardot-skills-nonofficial/ardot-generate-library",
       "strict": false,
-      "skills": ["."]
+      "skills": ["./"]
     }
   ]
 }
