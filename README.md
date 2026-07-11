@@ -12,7 +12,7 @@ My personal collection of Skills — open-source tools that extend Agent's capab
 
 | Skill                 | Description                                                                        | README                                       | Article                                                   |
 | --------------------- | ---------------------------------------------------------------------------------- | -------------------------------------------- | --------------------------------------------------------- |
-| **mp-article-writor** | Generate long-form WeChat Official Account articles with a 9-step writing workflow | [README](skills/mp-article-writor/README.md) | [Link](https://mp.weixin.qq.com/s/ayye6aaSlxAwf7gFjPHsRQ) |
+| **mp-article-writor** | Generate static WeChat articles with an 11-step writing and visual-production workflow | [README](skills/mp-article-writor/README.md) | [Link](https://mp.weixin.qq.com/s/ayye6aaSlxAwf7gFjPHsRQ) |
 | **logging-session**   | Record and query AI coding session logs to your Obsidian vault                     | [README](skills/logging-session/README.md)   | [Link](https://mp.weixin.qq.com/s/jGSc1NjR_DPMWhZEYi8OJQ) |
 | **article2ticktick**  | Convert tech newsletter articles to TickTick todos with auto-categorization        | [README](skills/article2ticktick/README.md)  | [Link](https://mp.weixin.qq.com/s/xbvFmOwk0SwdWMw4BUczSg) |
 
@@ -35,6 +35,8 @@ In Claude Code:
 ```
 
 Replace `<skill-name>` with `mp-article-writor`, `logging-session`, or `article2ticktick`.
+
+`mp-article-writor` 2.0 recommends two optional Guizang skills for complete static covers and body illustrations. See its [README](skills/mp-article-writor/README.md) for installation commands. Missing Guizang skills do not block article writing, but their visual outputs remain pending.
 
 ## Repository Structure
 
@@ -75,7 +77,7 @@ huuuuuuho-skills/
 
 | Skill | 简介 | README | 公众号文章 |
 |---|---|---|---|
-| **mp-article-writor** | 公众号长文生成：9 步写作工作流，从素材到终稿 | [README](skills/mp-article-writor/README.md) | [链接](https://mp.weixin.qq.com/s/ayye6aaSlxAwf7gFjPHsRQ) |
+| **mp-article-writor** | 微信公众号静态图文生成：11 步写作、视觉生产和交付工作流 | [README](skills/mp-article-writor/README.md) | [链接](https://mp.weixin.qq.com/s/ayye6aaSlxAwf7gFjPHsRQ) |
 | **logging-session** | AI 编码会话记录与查询，支持 Obsidian 集成 | [README](skills/logging-session/README.md) | [链接](https://mp.weixin.qq.com/s/jGSc1NjR_DPMWhZEYi8OJQ) |
 | **article2ticktick** | 技术周报文章批量/单篇转滴答清单待办 | [README](skills/article2ticktick/README.md) | [链接](https://mp.weixin.qq.com/s/xbvFmOwk0SwdWMw4BUczSg) |
 
@@ -98,6 +100,8 @@ huuuuuuho-skills/
 ```
 
 将 `<skill-name>` 替换为 `mp-article-writor`、`logging-session` 或 `article2ticktick`。
+
+`mp-article-writor` 2.0 推荐安装两个归藏 Skill，以完成静态双封面和正文插图生产。安装命令见其 [README](skills/mp-article-writor/README.md)。缺少归藏 Skill 不影响文章写作，对应视觉素材会保留为待完成项目。
 
 ## 仓库结构
 
