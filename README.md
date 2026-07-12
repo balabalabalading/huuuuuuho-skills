@@ -38,6 +38,18 @@ Replace `<skill-name>` with `mp-article-writor`, `logging-session`, or `article2
 
 `mp-article-writor` 2.0 recommends two optional Guizang skills for complete static covers and body illustrations. See its [README](skills/mp-article-writor/README.md) for installation commands. Missing Guizang skills do not block article writing, but their visual outputs remain pending.
 
+### Branch migration
+
+The default branch is now `main`. The remote `master` branch remains available during the migration window. If an existing clone still tracks `master`, run:
+
+```bash
+git fetch origin
+git switch main
+git branch --set-upstream-to=origin/main main
+```
+
+The `master` branch will be removed after the migration window. New clones use `main` automatically.
+
 ## Repository Structure
 
 ```
@@ -102,6 +114,18 @@ huuuuuuho-skills/
 将 `<skill-name>` 替换为 `mp-article-writor`、`logging-session` 或 `article2ticktick`。
 
 `mp-article-writor` 2.0 推荐安装两个归藏 Skill，以完成静态双封面和正文插图生产。安装命令见其 [README](skills/mp-article-writor/README.md)。缺少归藏 Skill 不影响文章写作，对应视觉素材会保留为待完成项目。
+
+### 分支迁移
+
+仓库默认分支已经切换为 `main`。迁移期间会暂时保留远程 `master` 分支。已有本地副本如果仍跟踪 `master`，请执行：
+
+```bash
+git fetch origin
+git switch main
+git branch --set-upstream-to=origin/main main
+```
+
+迁移窗口结束后会删除 `master` 分支，新克隆的仓库会自动使用 `main`。
 
 ## 仓库结构
 
