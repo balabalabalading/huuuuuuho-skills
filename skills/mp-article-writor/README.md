@@ -14,8 +14,8 @@ A Claude Code Skill that helps content creators craft static long-form articles 
 - **Independent review + fact-checking**: Subagent-powered reviews that detect AI-generated tone, logical gaps, structural symmetry, and factual accuracy
 - **"Human voice" final check**: Evaluates whether the article reads like "a knowledgeable friend chatting" or "AI outputting information"
 - **Style calibration**: Dual reference system (essay style analysis + writing style guide) to match your voice
-- **Two illustration styles**: Choose Guizang social-card layouts or Guizang material illustrations during intake; WeChat cover pairs always use the social-card skill
-- **Static-only delivery**: Produces a 21:9 main cover, a separately composed 1:1 share cover, body illustrations, editable files, prompts, and source records; no Live Photo or video output
+- **Two illustration styles**: Choose Guizang social-card layouts or Guizang material illustrations during intake; the WeChat composite cover always uses the social-card skill
+- **Static-only delivery**: Produces one 3.35:1 composite WeChat cover with independently designed 1692×720 and 720×720 zones, body illustrations, editable files, prompts, source records, and optional PicGo uploads; no Live Photo or video output
 - **Self-check checklist**: Four-layer quality gate — hard rules, style consistency, HKR scoring, human voice check
 
 ## Installation
@@ -76,8 +76,8 @@ Step 6  Fact-checking          → Article facts, visual evidence, sources, and 
 Step 7  Revise draft           → Address feedback item by item
 Step 8  Final self-check       → Article and visual-plan quality checklist
 Step 9  Finalize               → Update file + self-check report + title suggestions
-Step 10 Produce visuals        → Static WeChat cover pair + selected body-illustration style
-Step 11 Delivery check         → Dimensions, paths, labels, data, permissions, and static-only outputs
+Step 10 Produce visuals        → One 3.35:1 composite cover + selected body illustrations + PicGo upload
+Step 11 Delivery check         → Dimensions, HTTPS image links, labels, data, permissions, and static-only outputs
 ```
 
 ## Customization
@@ -111,7 +111,7 @@ After installation, customize `SKILL.md` for your own writing:
 - **「活人感」终审**：判断文章读起来是「朋友在聊天」还是「AI 在输出」
 - **风格校准**：范文分析 + 行文风格指南双重校准
 - **两种正文插图风格**：在询问环节选择归藏 social-card 排版卡片或归藏 material 材质插图，公众号封面固定使用 social-card
-- **全静态交付**：生成 21:9 主封面、单独构图的 1:1 分享封面、正文插图、可编辑文件、提示词和来源记录，不生成 Live Photo 或视频
+- **全静态交付**：生成一张 3.35:1 组合封面，左侧 1692×720 与右侧 720×720 分别设计，同时交付正文插图、可编辑文件、提示词、来源记录和 PicGo 图床地址，不生成 Live Photo 或视频
 - **自检清单**：硬性规则、风格一致性、HKR 质检、活人感四层检查
 
 ## 安装
@@ -172,8 +172,8 @@ Step 6  事实核查        → 正文事实、视觉证据、素材来源和授
 Step 7  修改初稿        → 逐条处理反馈
 Step 8  终审自检        → 文章和视觉脚本自检
 Step 9  完成终稿        → 更新文件 + 自检报告 + 标题推荐
-Step 10 生产静态视觉    → 公众号封面组合 + 已选正文插图风格
-Step 11 交付检查        → 尺寸、路径、标签、数据、授权和静态输出
+Step 10 生产静态视觉    → 3.35:1 单张组合封面 + 已选正文插图风格 + PicGo 上传
+Step 11 交付检查        → 尺寸、HTTPS 图片地址、标签、数据、授权和静态输出
 ```
 
 ## 自定义配置
