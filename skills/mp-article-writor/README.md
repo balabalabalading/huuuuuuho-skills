@@ -15,7 +15,7 @@ A Claude Code Skill that helps content creators craft static long-form articles 
 - **"Human voice" final check**: Evaluates whether the article reads like "a knowledgeable friend chatting" or "AI outputting information"
 - **Style calibration**: Dual reference system (essay style analysis + writing style guide) to match your voice
 - **Two illustration styles**: Choose Guizang social-card layouts or Guizang material illustrations during intake; the WeChat composite cover always uses the social-card skill
-- **Static-only delivery**: Produces one 3.35:1 composite WeChat cover with independently designed 1692×720 and 720×720 zones, body illustrations, editable files, prompts, source records, and optional PicGo uploads; no Live Photo or video output
+- **Local-first image delivery**: Produces one 3.35:1 composite WeChat cover, body illustrations, editable files, prompts, and relative Markdown image links by default; PicGo upload is optional
 - **Self-check checklist**: Four-layer quality gate — hard rules, style consistency, HKR scoring, human voice check
 
 ## Installation
@@ -54,6 +54,58 @@ git branch --set-upstream-to=origin/main main
 /plugin install mp-article-writor@huuuuuuho
 ```
 
+## Image publishing modes
+
+Image publishing defaults to `local`. This mode generates all images and uses relative Markdown paths such as:
+
+```markdown
+![Diagram](article-assets/my-article/illustrations/V01-diagram.png)
+```
+
+The article remains complete and editable without PicGo. Upload the local images manually in the WeChat editor when publishing.
+
+Set `MP_ARTICLE_IMAGE_MODE=picgo` to enable automatic upload. This is an explicit persistent authorization for the workflow to send final images to the PicGo Server. PicGo Desktop 2.2+ and PicGo Core Server 2.0+ are supported. Configure Tencent Cloud COS, GitHub, Alibaba Cloud OSS, or another image host inside PicGo; the skill never reads those credentials.
+
+Requirements for PicGo mode:
+
+- Node.js 18 or newer.
+- A running PicGo Server. The default address is `http://127.0.0.1:36677`.
+- Final image URLs must use HTTPS so the WeChat editor can load them publicly.
+
+Environment variables:
+
+```text
+MP_ARTICLE_IMAGE_MODE=picgo
+PICGO_SERVER_URL=http://127.0.0.1:36677
+PICGO_SERVER_SECRET=<optional shared secret>
+PICGO_REQUEST_TIMEOUT_MS=10000
+```
+
+`PICGO_SERVER_URL` accepts either a base address or a full `/upload` URL. You can also override it per command:
+
+```bash
+node scripts/upload-images-to-picgo.mjs \
+  --article-title "My article" \
+  --endpoint "http://127.0.0.1:36677/upload" \
+  --file "cover=/absolute/path/to/cover.png" \
+  --file "body-01=/absolute/path/to/V01.png"
+```
+
+Use `--dry-run` to inspect filenames and endpoints without contacting PicGo. If the server uses a shared secret, pass it only through `PICGO_SERVER_SECRET`; it is sent as a Bearer token and never printed.
+
+Common failures:
+
+- Connection failure: start PicGo Server and verify the host and port.
+- Timeout: increase `PICGO_REQUEST_TIMEOUT_MS` or check the selected image host.
+- HTTP 401: set the matching `PICGO_SERVER_SECRET`.
+- Non-HTTPS result: configure PicGo to return a public HTTPS URL before replacing article links.
+
+If PicGo is unavailable in explicit `picgo` mode, local files and relative links are preserved. The delivery report marks image publishing as pending and includes the retry command.
+
+### Without PicGo
+
+PicGo is not required. Keep the default `local` mode and the skill will still generate the article, composite cover, body illustrations, editable files, and relative Markdown image links. Upload those local images manually in the WeChat editor when publishing.
+
 ## Usage
 
 Describe your writing needs in Claude Code and the Skill triggers automatically:
@@ -76,8 +128,8 @@ Step 6  Fact-checking          → Article facts, visual evidence, sources, and 
 Step 7  Revise draft           → Address feedback item by item
 Step 8  Final self-check       → Article and visual-plan quality checklist
 Step 9  Finalize               → Update file + self-check report + title suggestions
-Step 10 Produce visuals        → One 3.35:1 composite cover + selected body illustrations + PicGo upload
-Step 11 Delivery check         → Dimensions, HTTPS image links, labels, data, permissions, and static-only outputs
+Step 10 Produce visuals        → Composite cover + body illustrations + local links or optional PicGo upload
+Step 11 Delivery check         → Dimensions, image-publishing status, labels, data, permissions, and static-only outputs
 ```
 
 ## Customization
@@ -111,7 +163,7 @@ After installation, customize `SKILL.md` for your own writing:
 - **「活人感」终审**：判断文章读起来是「朋友在聊天」还是「AI 在输出」
 - **风格校准**：范文分析 + 行文风格指南双重校准
 - **两种正文插图风格**：在询问环节选择归藏 social-card 排版卡片或归藏 material 材质插图，公众号封面固定使用 social-card
-- **全静态交付**：生成一张 3.35:1 组合封面，左侧 1692×720 与右侧 720×720 分别设计，同时交付正文插图、可编辑文件、提示词、来源记录和 PicGo 图床地址，不生成 Live Photo 或视频
+- **本地优先的图片交付**：默认生成一张 3.35:1 组合封面、正文插图、可编辑文件、提示词和相对 Markdown 图片链接，可选择使用 PicGo 上传
 - **自检清单**：硬性规则、风格一致性、HKR 质检、活人感四层检查
 
 ## 安装
@@ -150,6 +202,58 @@ git branch --set-upstream-to=origin/main main
 /plugin install mp-article-writor@huuuuuuho
 ```
 
+## 图片发布模式
+
+图片发布默认使用 `local`。该模式生成全部图片，并在文章中使用相对 Markdown 路径，例如：
+
+```markdown
+![关系图](article-assets/my-article/illustrations/V01-关系图.png)
+```
+
+没有安装 PicGo 时，文章和图片仍然正常生成并保持可编辑。正式发布公众号时，在公众号编辑器中手动上传这些本地图片。
+
+设置 `MP_ARTICLE_IMAGE_MODE=picgo` 后启用自动上传。这个设置代表用户对工作流的持久上传授权。支持 PicGo Desktop 2.2+ 和 PicGo Core Server 2.0+。腾讯云 COS、GitHub、阿里云 OSS 等具体图床均在 PicGo 内配置，Skill 不读取这些图床的凭据。
+
+PicGo 模式要求：
+
+- Node.js 18 或更高版本。
+- PicGo Server 正在运行，默认地址为 `http://127.0.0.1:36677`。
+- 最终图片地址使用 HTTPS，确保公众号编辑器可以公开加载。
+
+环境变量：
+
+```text
+MP_ARTICLE_IMAGE_MODE=picgo
+PICGO_SERVER_URL=http://127.0.0.1:36677
+PICGO_SERVER_SECRET=<可选的 shared secret>
+PICGO_REQUEST_TIMEOUT_MS=10000
+```
+
+`PICGO_SERVER_URL` 可以填写基础地址，也可以填写完整的 `/upload` 地址。单次运行可以通过命令覆盖：
+
+```bash
+node scripts/upload-images-to-picgo.mjs \
+  --article-title "文章标题" \
+  --endpoint "http://127.0.0.1:36677/upload" \
+  --file "封面=/绝对路径/cover.png" \
+  --file "正文01=/绝对路径/V01.png"
+```
+
+添加 `--dry-run` 可以检查文件名和服务地址，不会访问 PicGo。服务启用 shared secret 时，只通过 `PICGO_SERVER_SECRET` 提供；脚本使用 Bearer 请求头发送，不会打印该值。
+
+常见问题：
+
+- 连接失败，启动 PicGo Server，并检查主机和端口。
+- 请求超时，增加 `PICGO_REQUEST_TIMEOUT_MS`，或检查当前图床服务。
+- HTTP 401，设置与 PicGo Server 一致的 `PICGO_SERVER_SECRET`。
+- 返回非 HTTPS 地址，先在 PicGo 中配置公开 HTTPS 域名，再替换文章链接。
+
+显式使用 `picgo` 模式但服务不可用时，本地文件和相对路径会保留。交付报告将图片发布标记为待完成，并提供重新执行命令。
+
+### 没有 PicGo
+
+PicGo 不是必需依赖。保持默认的 `local` 模式，Skill 仍会生成文章、组合封面、正文插图、可编辑文件和相对 Markdown 图片链接。正式发布时，在公众号编辑器中手动上传这些本地图片。
+
 ## 使用
 
 在 Claude Code 中直接描述写作需求即可触发：
@@ -172,8 +276,8 @@ Step 6  事实核查        → 正文事实、视觉证据、素材来源和授
 Step 7  修改初稿        → 逐条处理反馈
 Step 8  终审自检        → 文章和视觉脚本自检
 Step 9  完成终稿        → 更新文件 + 自检报告 + 标题推荐
-Step 10 生产静态视觉    → 3.35:1 单张组合封面 + 已选正文插图风格 + PicGo 上传
-Step 11 交付检查        → 尺寸、HTTPS 图片地址、标签、数据、授权和静态输出
+Step 10 生产静态视觉    → 组合封面 + 正文插图 + 本地链接或可选 PicGo 上传
+Step 11 交付检查        → 尺寸、图片发布状态、标签、数据、授权和静态输出
 ```
 
 ## 自定义配置
