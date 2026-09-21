@@ -36,7 +36,7 @@ In Claude Code:
 
 Replace `<skill-name>` with `mp-article-writor`, `logging-session`, or `article2ticktick`.
 
-`mp-article-writor` 2.1.0 routes software-update briefs, product reviews, workflow retrospectives, technical explainers, and narrative essays before entering the writing workflow. It recommends two optional Guizang skills for complete static covers and body illustrations. See its [README](skills/mp-article-writor/README.md) for installation commands. Missing Guizang skills do not block article writing, but their visual outputs remain pending.
+`mp-article-writor` 2.1.1 routes software-update briefs, product reviews, workflow retrospectives, technical explainers, and narrative essays before entering the writing workflow. The public package no longer includes a specific author's voice, samples, footer, or personal paths; private style profiles remain local. It recommends two optional Guizang skills for complete static covers and body illustrations. See its [README](skills/mp-article-writor/README.md) for installation commands. Missing Guizang skills do not block article writing, but their visual outputs remain pending.
 
 Image publishing is local-first. The skill generates local images and relative Markdown links by default. PicGo Desktop or PicGo Core Server can be enabled explicitly to upload through any image host already configured in PicGo; PicGo is optional and the skill never reads image-host credentials.
 
@@ -115,7 +115,7 @@ huuuuuuho-skills/
 
 将 `<skill-name>` 替换为 `mp-article-writor`、`logging-session` 或 `article2ticktick`。
 
-`mp-article-writor` 2.1.0 会先为软件更新简报、产品测评、工作流复盘、技术解析和叙事文章选择主类型，再进入写作流程。它推荐安装两个归藏 Skill，以完成单张组合封面和正文插图生产。安装命令见其 [README](skills/mp-article-writor/README.md)。缺少归藏 Skill 不影响文章写作，对应视觉素材会保留为待完成项目。
+`mp-article-writor` 2.1.1 会先为软件更新简报、产品测评、工作流复盘、技术解析和叙事文章选择主类型，再进入写作流程。公开包不再包含特定作者的声音、范文、固定结尾和个人路径，私有风格资料留在本机维护。它推荐安装两个归藏 Skill，以完成单张组合封面和正文插图生产。安装命令见其 [README](skills/mp-article-writor/README.md)。缺少归藏 Skill 不影响文章写作，对应视觉素材会保留为待完成项目。
 
 图片发布默认使用本地模式，生成本地图片和相对 Markdown 链接。用户可以显式启用 PicGo Desktop 或 PicGo Core Server，让工作流通过 PicGo 中已经配置的任意图床上传图片。PicGo 属于可选集成，Skill 不读取具体图床凭据。
 
