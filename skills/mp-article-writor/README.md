@@ -14,12 +14,13 @@ A Claude Code Skill that routes software-update briefs, product reviews, workflo
 - **Article-type routing**: Selects a primary structure for software-update briefs, product reviews, workflow retrospectives, technical explainers, or narrative essays
 - **Release-brief mode**: Opens with the date or version range and an unordered update list, then explains each change, impact, use case, and essential boundary without per-section commit links
 - **WeChat heading levels**: Keeps one document title and uses level-three headings for all body sections so pasted articles match the native editor more closely
-- **Independent review + fact-checking**: Subagent-powered reviews that detect AI-generated tone, logical gaps, structural symmetry, and factual accuracy
-- **"Human voice" final check**: Evaluates whether the article reads like "a knowledgeable friend chatting" or "AI outputting information"
+- **Contextual anti-template review + fact-checking**: Subagent-powered reviews identify observable filler, repetition, inflated claims, structural formulas, and factual risks without treating words or punctuation as a blacklist
+- **Meaning-preserving revision**: Keeps an immutable first-draft baseline and checks facts, negation, scope, conditions, time, attribution, certainty, and author stance before final delivery
+- **Route-matched naturalness check**: Evaluates whether the finished article sounds natural for its selected type instead of forcing every article into a conversational voice
 - **Style calibration**: A neutral public baseline plus an optional external author profile, applied after article-type routing
 - **Two illustration styles**: Choose Guizang social-card layouts or Guizang material illustrations during intake; the WeChat composite cover always uses the social-card skill
 - **Local-first image delivery**: Produces one 3.35:1 composite WeChat cover, body illustrations, editable files, prompts, and relative Markdown image links by default; PicGo upload is optional
-- **Self-check checklist**: Four-layer quality gate — hard rules, style consistency, HKR scoring, human voice check
+- **Self-check checklist**: Four-layer quality gate — delivery rules, style consistency, HKR scoring, route-matched naturalness
 
 ## Installation
 
@@ -40,7 +41,7 @@ npx skills add https://github.com/op7418/guizang-material-illustration --skill g
 
 The writing workflow still runs when either skill is missing. Visual outputs covered by the missing skill are listed as pending; the workflow does not fall back to the previous prompt-only delivery.
 
-Version 2.1.1 moves author-specific voice and writing samples out of the public package, adds an optional external author profile, and removes the preset writing-technique toolbox. Version 2.1.0 added article-type routing, a focused software-update brief format with consolidated source handling, and WeChat-friendly body headings. Version 2.0 replaced the previous prompt-only illustration workflow with actual static visual production. The previous stable source remains available at the `mp-article-writor--v1.0.0` tag.
+Version 2.2.0 adds a contextual anti-template review that preserves meaning and certainty, replaces phrase-blacklist and fixed-rhythm checks with functional judgments, keeps an immutable first-draft review baseline, and adds preconfirmed full-workflow forward-eval cases for semantic drift. Version 2.1.1 moved author-specific voice and writing samples out of the public package, added an optional external author profile, and removed the preset writing-technique toolbox. Version 2.1.0 added article-type routing, a focused software-update brief format with consolidated source handling, and WeChat-friendly body headings. Version 2.0 replaced the previous prompt-only illustration workflow with actual static visual production. The previous stable source remains available at the `mp-article-writor--v1.0.0` tag.
 
 The repository default branch is `main`. Existing clones that still track `master` should migrate before the remote branch is removed:
 
@@ -57,6 +58,8 @@ git branch --set-upstream-to=origin/main main
 /plugin install mp-article-writor@huuuuuuho
 ```
 
+Forward-eval specifications are stored in `evals/evals.json`. Each case supplies all intake choices, a confirmed outline, an isolated `/tmp` output directory, and `local` image publishing so it can proceed without another user turn. These are model-behavior evaluations; the deterministic Node.js tests cover only the PicGo upload script.
+
 ## Image publishing modes
 
 Image publishing defaults to `local`. This mode generates all images and uses relative Markdown paths such as:
@@ -68,6 +71,8 @@ Image publishing defaults to `local`. This mode generates all images and uses re
 The article remains complete and editable without PicGo. Upload the local images manually in the WeChat editor when publishing.
 
 Set `MP_ARTICLE_IMAGE_MODE=picgo` to enable automatic upload. This is an explicit persistent authorization for the workflow to send final images to the PicGo Server. PicGo Desktop 2.2+ and PicGo Core Server 2.0+ are supported. Configure Tencent Cloud COS, GitHub, Alibaba Cloud OSS, or another image host inside PicGo; the skill never reads those credentials.
+
+An explicit `local` or `picgo` choice in the current request overrides the environment default for that task. Only the final selected `picgo` mode authorizes cloud upload.
 
 Requirements for PicGo mode:
 
@@ -126,12 +131,12 @@ The Skill follows a strict 11-step workflow, completing each step before moving 
 Step 1  Understand intent     → Route article type; confirm angle, depth, theme, materials, illustration style, and output folder
 Step 2  Read references        → Apply the public style guide and an optional external author profile
 Step 3  Design outline & style → Present outline and visual script, await confirmation
-Step 4  Write first draft      → Follow all writing rules
-Step 5  Independent review     → AI-tone detection, logic, structure, information density
+Step 4  Write first draft      → Follow all writing rules and preserve an immutable review baseline
+Step 5  Independent review     → Contextual anti-template review, semantic risk, logic, structure, and information density
 Step 6  Fact-checking          → Article facts, visual evidence, sources, and permissions
 Step 7  Revise draft           → Address feedback item by item
-Step 8  Final self-check       → Article and visual-plan quality checklist
-Step 9  Finalize               → Update file + self-check report + title suggestions
+Step 8  Final self-check       → Compare source materials, first-draft baseline, current draft, and visual plan
+Step 9  Finalize               → Recheck meaning after final content edits, then update file + report + title suggestions
 Step 10 Produce visuals        → Composite cover + body illustrations + local links or optional PicGo upload
 Step 11 Delivery check         → Dimensions, image-publishing status, labels, data, permissions, and static-only outputs
 ```
@@ -168,12 +173,13 @@ The profile may define preferences under any of the five existing article types,
 - **文章类型路由**：为软件更新简报、产品测评、工作流复盘、技术解析和叙事文章选择一个主结构
 - **更新简报模式**：以日期或版本范围和无序更新列表开头，逐项说明改动、影响、应用场景和必要边界，不在每节末尾附 commit 链接
 - **公众号标题层级**：保留一个文档主标题，正文章节统一使用三级标题，复制到公众号后更接近原生字号
-- **独立审读 + 事实核查**：通过 subagent 对初稿进行 AI 味检测、逻辑连贯性检查、事实性核查
-- **「活人感」终审**：判断文章读起来是「朋友在聊天」还是「AI 在输出」
+- **去模板化审读 + 事实核查**：通过 subagent 检查空泛、重复、意义拔高、公式化结构和事实风险，不把单个词语或标点当成禁用项
+- **语义保真修改**：保留不可覆盖的初稿基线，在最终交付前核对事实、否定、范围、条件、时间、归因、确定程度和作者立场
+- **按类型自然表达终审**：判断成稿是否符合所选文章类型，不把所有文章强行改成聊天语气
 - **风格校准**：公开中性基线 + 可选的外部作者画像，在文章类型路由之后应用
 - **两种正文插图风格**：在询问环节选择归藏 social-card 排版卡片或归藏 material 材质插图，公众号封面固定使用 social-card
 - **本地优先的图片交付**：默认生成一张 3.35:1 组合封面、正文插图、可编辑文件、提示词和相对 Markdown 图片链接，可选择使用 PicGo 上传
-- **自检清单**：硬性规则、风格一致性、HKR 质检、活人感四层检查
+- **自检清单**：交付规则、风格一致性、HKR 质检、按类型自然表达四层检查
 
 ## 安装
 
@@ -194,7 +200,7 @@ npx skills add https://github.com/op7418/guizang-material-illustration --skill g
 
 缺少任一 Skill 时仍可完成文章写作，对应的视觉素材会被列为待完成项目，不会退回旧版提示词交付方式。
 
-2.1.1 版本将作者专属声音与写作样本移出公开包，增加可选的外部作者画像，并删除预设的写作技巧工具箱。2.1.0 版本增加文章类型路由、带集中来源记录的软件更新简报格式，以及公众号正文标题规则。2.0 版本使用实际静态视觉生产替代旧版提示词配图流程。旧版稳定源码保留在 `mp-article-writor--v1.0.0` 标签。
+2.2.0 版本增加按上下文执行的去模板化审读，修改时保留原意和确定程度，将禁词表与固定节奏检查改为功能判断，保留不可覆盖的初稿审读基线，并加入前置信息和大纲均已确认的完整工作流评测案例。2.1.1 版本将作者专属声音与写作样本移出公开包，增加可选的外部作者画像，并删除预设的写作技巧工具箱。2.1.0 版本增加文章类型路由、带集中来源记录的软件更新简报格式，以及公众号正文标题规则。2.0 版本使用实际静态视觉生产替代旧版提示词配图流程。旧版稳定源码保留在 `mp-article-writor--v1.0.0` 标签。
 
 仓库默认分支已经切换为 `main`。已有本地副本如果仍跟踪 `master`，请在远程分支清理前执行：
 
@@ -211,6 +217,8 @@ git branch --set-upstream-to=origin/main main
 /plugin install mp-article-writor@huuuuuuho
 ```
 
+前向行为评测定义在 `evals/evals.json`。每个案例均提供完整的前置信息、已确认大纲、隔离的 `/tmp` 输出目录和 `local` 图片发布方式，可以在没有后续用户回复的情况下继续。它们属于模型行为评测；确定性的 Node.js 测试只覆盖 PicGo 上传脚本。
+
 ## 图片发布模式
 
 图片发布默认使用 `local`。该模式生成全部图片，并在文章中使用相对 Markdown 路径，例如：
@@ -222,6 +230,8 @@ git branch --set-upstream-to=origin/main main
 没有安装 PicGo 时，文章和图片仍然正常生成并保持可编辑。正式发布公众号时，在公众号编辑器中手动上传这些本地图片。
 
 设置 `MP_ARTICLE_IMAGE_MODE=picgo` 后启用自动上传。这个设置代表用户对工作流的持久上传授权。支持 PicGo Desktop 2.2+ 和 PicGo Core Server 2.0+。腾讯云 COS、GitHub、阿里云 OSS 等具体图床均在 PicGo 内配置，Skill 不读取这些图床的凭据。
+
+当前请求明确选择 `local` 或 `picgo` 时，会覆盖本次任务的环境变量默认值。只有最终选定 `picgo` 才包含云端上传授权。
 
 PicGo 模式要求：
 
@@ -280,12 +290,12 @@ Skill 会按 11 步工作流依次执行。
 Step 1  理解作者意图    → 选择文章类型，确认切入角度、深度、主旨、素材、正文插图风格和输出目录
 Step 2  阅读参考资料    → 应用公开行文规范和可选的外部作者画像
 Step 3  设计大纲和风格  → 呈现大纲和视觉脚本，等待确认
-Step 4  编写初稿        → 按规则写作
-Step 5  独立审读        → AI 味检测、逻辑、结构、信息密度
+Step 4  编写初稿        → 按规则写作并保留不可覆盖的审读基线
+Step 5  独立审读        → 去模板化、语义风险、逻辑、结构和信息密度
 Step 6  事实核查        → 正文事实、视觉证据、素材来源和授权状态
 Step 7  修改初稿        → 逐条处理反馈
-Step 8  终审自检        → 文章和视觉脚本自检
-Step 9  完成终稿        → 更新文件 + 自检报告 + 标题推荐
+Step 8  终审自检        → 对照作者素材、初稿基线、当前稿和视觉脚本
+Step 9  完成终稿        → 最终含义修改复核后更新文件 + 自检报告 + 标题推荐
 Step 10 生产静态视觉    → 组合封面 + 正文插图 + 本地链接或可选 PicGo 上传
 Step 11 交付检查        → 尺寸、图片发布状态、标签、数据、授权和静态输出
 ```

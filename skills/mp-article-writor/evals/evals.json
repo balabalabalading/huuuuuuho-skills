@@ -1,0 +1,56 @@
+{
+  "skill_name": "mp-article-writor",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "请使用 mp-article-writor 完成完整的 11 步公众号文章工作流。以下信息和大纲已经确认，不要重复询问：文章类型为新闻和软件更新简报；切入角度为更新事实；深度为入门科普；核心主旨为说明本次已经完成的功能和仍未完成的边界；没有第一人称经历；正文插图选择 guizang-social-card-skill；没有现有视觉素材；输出目录为 /tmp/mp-article-writor-eval-01；图片发布方式为 local；首次静态渲染和必要修复已经授权，可选视觉 Skill 不可用时按原契约标记待完成，不要安装。已确认大纲：先列更新概览，再分别说明三个已完成功能，最后说明离线编辑仍在计划中。素材：本次新增导出、搜索和批量重命名；离线编辑计划下一版推出，目前尚未完成测试。素材有限，允许低于推荐篇幅，不要为达到字数补写，也不要使用素材之外的外部事实。",
+      "expected_output": "工作流应在无需再次确认已提供信息的情况下完成文章与交付记录，保留三个独立功能和离线编辑的计划状态，不补写上线时间、性能数据、用户评价或个人故事。",
+      "files": [],
+      "assertions": [
+        {"name": "uses_preconfirmed_inputs", "description": "直接使用已经确认的类型、发布方式、输出目录和大纲，不在 Step 1 或 Step 3 重复询问"},
+        {"name": "preserves_three_features", "description": "导出、搜索和批量重命名三个独立功能均被保留，没有为避免三段式而删项或凑项"},
+        {"name": "preserves_completion_state", "description": "离线编辑仍表述为下一版计划且尚未完成测试，没有写成已经上线"},
+        {"name": "does_not_invent_evidence", "description": "没有补造上线日期、性能数据、用户反馈或第一人称经历"},
+        {"name": "uses_release_route", "description": "使用新闻和软件更新简报的直接、克制结构，不强行加入情绪或故事"}
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "请使用 mp-article-writor 完成完整的 11 步公众号文章工作流。以下信息和大纲已经确认，不要重复询问：文章类型为个人实践和工作流复盘；切入角度为个人实践；深度为中度解析；核心主旨为复盘一次批量导出流程调整及其有限证据；真实经历仅限后面的素材；正文插图选择 guizang-material-illustration；没有现有视觉素材；输出目录为 /tmp/mp-article-writor-eval-02；图片发布方式为 local；首次静态渲染和必要修复已经授权，可选视觉 Skill 不可用时按原契约标记待完成，不要安装。已确认大纲：先说明手工命名造成的耗时，再说明改用命名模板后的结果，最后交代样本只有两次。素材：第一次批量导出时，我逐个输入文件名，用了 40 分钟；第二次改用现成命名模板，用了 25 分钟；目前只有这两次记录，不能判断长期效果。素材有限，允许低于推荐篇幅，不要把它写成教程，也不要使用素材之外的外部事实。",
+      "expected_output": "文章应围绕真实问题、调整和反馈组织，保留只有两次记录、不能判断长期效果的限制，不扩写成通用 SOP、固定教程或一次性成功故事。",
+      "files": [],
+      "assertions": [
+        {"name": "uses_preconfirmed_inputs", "description": "直接使用已经确认的类型、发布方式、输出目录和大纲，不重复询问"},
+        {"name": "uses_existing_first_person", "description": "只使用素材已有的第一人称经历和判断，没有补写新的冲突、失败或情绪"},
+        {"name": "preserves_uncertainty", "description": "明确保留只有两次记录、不能判断长期效果的限制，没有推导普遍有效的结论"},
+        {"name": "avoids_sop_conversion", "description": "没有把复盘改写成完整教程、固定阶段或通用 SOP"},
+        {"name": "explains_decision_chain", "description": "能够说明问题、选择和反馈之间的关系，而不只是罗列步骤"}
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "请使用 mp-article-writor 完成完整的 11 步公众号文章工作流。以下信息和大纲已经确认，不要重复询问：文章类型为技术解析和教程；切入角度为技术拆解；深度为中度解析；核心主旨为解释闭环反馈的基本机制和已知边界；没有第一人称经历；正文插图选择 guizang-social-card-skill；没有现有视觉素材；输出目录为 /tmp/mp-article-writor-eval-03；图片发布方式为 local；首次静态渲染和必要修复已经授权，可选视觉 Skill 不可用时按原契约标记待完成，不要安装。已确认大纲：先说明闭环反馈解决什么关系，再解释目标、当前输出和反馈调整，最后说明材料没有提供性能数据。素材：控制器会比较目标值与当前输出，再根据差异调整下一次输出；材料将这一过程称为闭环反馈，但没有提供响应速度、稳定性或其他性能数据。素材有限，允许低于推荐篇幅，不要为达到字数补写，也不要使用素材之外的外部事实。",
+      "expected_output": "文章应保留闭环反馈这一准确术语，解释材料能够支持的机制边界，不把技术词当作高频词删除，也不补造性能结论。",
+      "files": [],
+      "assertions": [
+        {"name": "uses_preconfirmed_inputs", "description": "直接使用已经确认的类型、发布方式、输出目录和大纲，不重复询问"},
+        {"name": "preserves_valid_term", "description": "保留并正确使用闭环反馈这一有明确含义的技术术语"},
+        {"name": "keeps_technical_register", "description": "保持技术解析所需的正式程度，没有统一改成聊天语气"},
+        {"name": "does_not_invent_performance", "description": "没有补写响应速度、稳定性或性能提升数据"},
+        {"name": "keeps_generic_category_when_needed", "description": "材料没有给出具体控制器产品名时，不猜测或补造品牌和型号"}
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "请使用 mp-article-writor 完成完整的 11 步公众号文章工作流。以下信息和大纲已经确认，不要重复询问：文章类型为产品体验和工具测评；切入角度为个人体验；深度为入门科普；核心主旨为区分主观界面感受、已经测试的功能和没有体验的范围；真实经历仅限后面的素材；正文插图选择 guizang-material-illustration；没有现有视觉素材；输出目录为 /tmp/mp-article-writor-eval-04；图片发布方式为 local；首次静态渲染和必要修复已经授权，可选视觉 Skill 不可用时按原契约标记待完成，不要安装。已确认大纲：先说明主观界面感受，再记录导出功能的实际体验，最后交代其他功能尚未体验。素材：我觉得界面很漂亮，但目前只实际测试了导出功能，其他功能没有体验。素材有限，允许低于推荐篇幅，不要为达到字数补写，也不要使用素材之外的外部事实。",
+      "expected_output": "文章应保留主观评价的主观性质，只对导出功能作有依据的体验判断，并明确其他功能未体验。",
+      "files": [],
+      "assertions": [
+        {"name": "uses_preconfirmed_inputs", "description": "直接使用已经确认的类型、发布方式、输出目录和大纲，不重复询问"},
+        {"name": "preserves_subjective_attribution", "description": "把界面漂亮保留为作者的主观评价，不改成客观排名或普遍结论"},
+        {"name": "keeps_scope_boundary", "description": "只评价实际测试过的导出功能，并保留其他功能未体验的范围限制"},
+        {"name": "avoids_promotional_inflation", "description": "没有把主观体验拔高成宣传语、行业领先或测试结论"}
+      ]
+    }
+  ]
+}
